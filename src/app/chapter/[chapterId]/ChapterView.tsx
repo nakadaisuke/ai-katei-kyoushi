@@ -234,6 +234,15 @@ export function ChapterView({
     }
   }
 
+  function handleQuizBack() {
+    if (quizIndex <= 0) return;
+    const prevIdx = quizIndex - 1;
+    // 前の問題に戻って解き直せるよう、その問題の記録済み結果はいったん取り除く
+    // （再提出時にhandleQuizSubmitが同じ位置に新しい結果を積み直す）
+    setQuizResults((prev) => prev.slice(0, prevIdx));
+    setQuizIndex(prevIdx);
+  }
+
   if (phase === "explanation") {
     return <ExplanationPanel chapter={chapter} onNext={() => startProblem(0)} />;
   }
@@ -245,6 +254,7 @@ export function ChapterView({
         index={quizIndex}
         total={quizProblems.length}
         onSubmit={handleQuizSubmit}
+        onBack={quizIndex > 0 ? handleQuizBack : undefined}
       />
     );
   }

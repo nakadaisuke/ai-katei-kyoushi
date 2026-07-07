@@ -9,19 +9,33 @@ export function QuizProblemView({
   index,
   total,
   onSubmit,
+  onBack,
+  label = "章末小テスト",
 }: {
   problem: Problem;
   index: number;
   total: number;
   onSubmit: (rawAnswer: string) => void;
+  onBack?: () => void;
+  label?: string;
 }) {
   const [draft, setDraft] = useState("");
 
   return (
     <div className="flex flex-col gap-4 rounded border p-4">
+      {onBack && (
+        <button
+          type="button"
+          onClick={onBack}
+          className="self-start text-sm text-blue-600 underline"
+        >
+          ← 前の問題に戻る
+        </button>
+      )}
+
       <div className="flex items-center justify-between text-sm text-gray-500">
         <span>
-          章末小テスト {index + 1} / {total}
+          {label} {index + 1} / {total}
         </span>
       </div>
 

@@ -53,6 +53,15 @@ export function MultiChapterTestView({
     }
   }
 
+  function handleBack() {
+    if (index <= 0) return;
+    const prevIndex = index - 1;
+    // 前の問題に戻って解き直せるよう、その問題の記録済み結果はいったん取り除く
+    // （再提出時にhandleSubmitが同じ位置に新しい結果を積み直す）
+    setResults((prev) => prev.slice(0, prevIndex));
+    setIndex(prevIndex);
+  }
+
   if (done) {
     const isGraduation = test.kind === "graduation";
     return (
@@ -79,6 +88,8 @@ export function MultiChapterTestView({
         index={index}
         total={problems.length}
         onSubmit={handleSubmit}
+        onBack={index > 0 ? handleBack : undefined}
+        label={test.kind === "graduation" ? "そつぎょうテスト" : "確認テスト"}
       />
     </div>
   );
