@@ -3,6 +3,11 @@ import type { Chapter } from "@/lib/types";
 // 問題は下記の実在教材の設問・解答をもとに作成（AIによる自由生成は行っていない）。
 // - 宮城県教育センター「わくわくワーク」小学3年 算数 単元5「長いものの長さのはかり方と表し方」・単元13「重さのたんいとはかり方」
 //   https://www.edu-c.pref.miyagi.jp/tangen/math/ele3_math/answer/00.els3.kaitou.all.pdf
+// - 埼玉県「学力向上ワークシート」算数 小学3年 5 長さ・13 重さ
+//   https://www.pref.saitama.lg.jp/documents/56538/3-5nagaimonononagasa-mondai.pdf
+//   https://www.pref.saitama.lg.jp/documents/56538/3-13omosanotanitohakarikata-mondai.pdf
+//   （県の著作権ページには教育目的の一律利用許可の記載はなく、すたぺんドリルと
+//   同様に「個人利用の範囲で使用し、商用化・配布前に見直す」caveatを踏襲する）
 export const g3LengthWeight: Chapter = {
   id: "g3-length-weight",
   grade: "小学3年",
@@ -193,6 +198,98 @@ export const g3LengthWeight: Chapter = {
         "はな子さんが800m長い",
       ],
       tags: ["長さの単位換算", "文章題", "複合問題"],
+    },
+    {
+      id: "g3-lenwt-normal-8",
+      difficulty: "normal",
+      question: "1250mは何km何mですか。",
+      answer: "1km250m",
+      steps: ["1250mのうち、1000mごとに1kmとする", "1250m = 1000m + 250m = 1km250m"],
+      tags: ["長さの単位換算"],
+    },
+    {
+      id: "g3-lenwt-normal-9",
+      difficulty: "normal",
+      question: "3kg40gは何gですか。",
+      answer: "3040",
+      steps: ["3kg = 3000g", "3000g + 40g = 3040g"],
+      tags: ["重さの単位換算"],
+    },
+    {
+      id: "g3-lenwt-normal-10",
+      difficulty: "normal",
+      question: "1600gは何kg何gですか。",
+      answer: "1kg600g",
+      steps: ["1600gのうち、1000gごとに1kgとする", "1600g = 1000g + 600g = 1kg600g"],
+      tags: ["重さの単位換算"],
+    },
+    {
+      id: "g3-lenwt-normal-11",
+      difficulty: "normal",
+      question: "2090gは何kg何gですか。",
+      answer: "2kg90g",
+      steps: ["2090gのうち、1000gごとに1kgとする", "2090g = 2000g + 90g = 2kg90g"],
+      tags: ["重さの単位換算"],
+    },
+    {
+      id: "g3-lenwt-normal-12",
+      difficulty: "normal",
+      question: "2t70kgは何kgですか。",
+      answer: "2070",
+      steps: ["2t = 2000kg", "2000kg + 70kg = 2070kg"],
+      tags: ["重さの単位換算"],
+    },
+    {
+      id: "g3-lenwt-normal-13",
+      difficulty: "normal",
+      question: "1円玉の重さは何gですか。",
+      answer: "1",
+      steps: ["1円玉1こは、ちょうど1gの重さになるように作られている"],
+      tags: ["重さの単位換算"],
+    },
+    {
+      id: "g3-lenwt-normal-14",
+      difficulty: "normal",
+      question: "1kgまではかれるはかりがあります。このはかりでは、何gまではかることができますか。",
+      answer: "1000",
+      steps: ["1kg = 1000gなので、このはかりは1000gまではかることができる"],
+      tags: ["重さの単位換算"],
+    },
+    {
+      id: "g3-lenwt-hard-7",
+      difficulty: "hard",
+      question:
+        "はばが1mのモップを4つ使って、となりのモップと10cmずつ重ねてつなげます。モップ4つ分の全体のはばは何m何cmになりますか。",
+      answer: "3m70cm",
+      steps: [
+        "モップ4つの長さの合計：1m × 4 = 4m = 400cm",
+        "重なる部分は、モップとモップの間の3か所で、それぞれ10cmずつ短くなる：10 × 3 = 30cm",
+        "400cm - 30cm = 370cm = 3m70cm",
+      ],
+      tags: ["長さの単位換算", "文章題", "複合問題"],
+    },
+    {
+      id: "g3-lenwt-hard-8",
+      difficulty: "hard",
+      question:
+        "けんばんハーモニカの重さをはかると700gでした。そのケースの重さをはかると600gでした。けんばんハーモニカをケースに入れると、全体の重さは何kg何gになるでしょうか。",
+      answer: "1kg300g",
+      steps: ["「合わせる」のでたし算 700 + 600 を考える", "700 + 600 = 1300g", "1300g = 1kg300g"],
+      tags: ["重さの単位換算", "文章題"],
+    },
+    {
+      id: "g3-lenwt-hard-9",
+      difficulty: "hard",
+      question:
+        "重さ900gのランドセルにものを入れてはかると、合わせて2kg800gありました。ランドセルに入れたものの重さは、何kg何gあるでしょうか。",
+      answer: "1kg900g",
+      steps: [
+        "2kg800g をgに直す：2800g",
+        "「全体の重さ - ランドセルの重さ = 入れたものの重さ」と考える",
+        "2800 - 900 = 1900g",
+        "1900g = 1kg900g",
+      ],
+      tags: ["重さの単位換算", "文章題"],
     },
   ],
 };

@@ -6,6 +6,10 @@ import type { Chapter } from "@/lib/types";
 // - すたぺんドリル（startoo.co）小3算数「わり算」「あまりのあるわり算」
 //   https://startoo.co/workbook/85967/ （個人利用の範囲で参照。同サイトの利用規約は商用利用を禁止しているため、
 //   本アプリを配布・商用化する場合はこの出典分の扱いを再検討すること）
+// - 埼玉県「学力向上ワークシート」算数 小学3年 3 わり算
+//   https://www.pref.saitama.lg.jp/documents/56538/3-3warizan-mondai.pdf
+//   （県の著作権ページには教育目的の一律利用許可の記載はなく、すたぺんドリルと
+//   同様に「個人利用の範囲で使用し、商用化・配布前に見直す」caveatを踏襲する）
 export const g3Division: Chapter = {
   id: "g3-division",
   grade: "小学3年",
@@ -266,6 +270,86 @@ export const g3Division: Chapter = {
         "（この問題ではあまりを切り捨てて、商の4がそのまま答えになる）",
       ],
       tags: ["あまりのあるわり算", "文章題", "あまりの扱い"],
+    },
+    {
+      id: "g3-division-easy-6",
+      difficulty: "easy",
+      question: "8 ÷ 1 = ？",
+      answer: "8",
+      steps: ["どんな数も1でわると、答えはもとの数のまま", "8 ÷ 1 = 8"],
+      tags: ["あまりのないわり算"],
+    },
+    {
+      id: "g3-division-easy-7",
+      difficulty: "easy",
+      question: "4 ÷ 4 = ？",
+      answer: "1",
+      steps: ["0でない同じ数どうしをわると、答えは必ず1になる", "4 ÷ 4 = 1"],
+      tags: ["あまりのないわり算"],
+    },
+    {
+      id: "g3-division-easy-8",
+      difficulty: "easy",
+      question: "0 ÷ 3 = ？",
+      answer: "0",
+      steps: ["0を何かの数でわると、答えは必ず0になる", "0 ÷ 3 = 0"],
+      tags: ["あまりのないわり算"],
+    },
+    {
+      id: "g3-division-easy-9",
+      difficulty: "easy",
+      question: "0 ÷ 9 = ？",
+      answer: "0",
+      steps: ["0を何かの数でわると、答えは必ず0になる", "0 ÷ 9 = 0"],
+      tags: ["あまりのないわり算"],
+    },
+    {
+      id: "g3-division-normal-6",
+      difficulty: "normal",
+      question: "18 ÷ 3 = ？",
+      answer: "6",
+      steps: ["3のだんの九九を使う：3 × 6 = 18", "18 ÷ 3 = 6"],
+      tags: ["あまりのないわり算"],
+    },
+    {
+      id: "g3-division-normal-7",
+      difficulty: "normal",
+      question: "40 ÷ 8 = ？",
+      answer: "5",
+      steps: ["8のだんの九九を使う：8 × 5 = 40", "40 ÷ 8 = 5"],
+      tags: ["あまりのないわり算"],
+    },
+    {
+      id: "g3-division-normal-8",
+      difficulty: "normal",
+      question: "54 ÷ 6 = ？",
+      answer: "9",
+      steps: ["6のだんの九九を使う：6 × 9 = 54", "54 ÷ 6 = 9"],
+      tags: ["あまりのないわり算"],
+    },
+    {
+      id: "g3-division-normal-9",
+      difficulty: "normal",
+      question: "72 ÷ 9 = ？",
+      answer: "8",
+      steps: ["9のだんの九九を使う：9 × 8 = 72", "72 ÷ 9 = 8"],
+      tags: ["あまりのないわり算"],
+    },
+    {
+      id: "g3-division-normal-10",
+      difficulty: "normal",
+      question: "42このりんごを、1箱に6こずつ入れます。箱はいくついりますか。",
+      answer: "7",
+      steps: ["「同じ数ずつ分ける」なので、わり算 42 ÷ 6 を考える", "6 × 7 = 42 なので、42 ÷ 6 = 7", "箱は7ついる"],
+      tags: ["あまりのないわり算", "文章題"],
+    },
+    {
+      id: "g3-division-normal-11",
+      difficulty: "normal",
+      question: "24人を、6つのグループに同じ人数ずつ分けます。1つのグループは何人になりますか。",
+      answer: "4",
+      steps: ["「同じ人数ずつ分ける」なので、わり算 24 ÷ 6 を考える", "6 × 4 = 24 なので、24 ÷ 6 = 4", "1つのグループは4人になる"],
+      tags: ["あまりのないわり算", "文章題"],
     },
   ],
 };

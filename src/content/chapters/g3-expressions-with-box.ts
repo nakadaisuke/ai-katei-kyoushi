@@ -6,6 +6,10 @@ import type { Chapter } from "@/lib/types";
 // - すたぺんドリル（startoo.co）小3算数「□を使った式」
 //   https://startoo.co/workbook/86039/ （個人利用の範囲で参照。同サイトの利用規約は商用利用を禁止しているため、
 //   本アプリを配布・商用化する場合はこの出典分の扱いを再検討すること）
+// - 埼玉県「学力向上ワークシート」算数 小学3年 15 □を使った式
+//   https://www.pref.saitama.lg.jp/documents/56538/3-15sikakuwotukattasiki-mondai.pdf
+//   （県の著作権ページには教育目的の一律利用許可の記載はなく、すたぺんドリルと
+//   同様に「個人利用の範囲で使用し、商用化・配布前に見直す」caveatを踏襲する）
 export const g3ExpressionsWithBox: Chapter = {
   id: "g3-expressions-with-box",
   grade: "小学3年",
@@ -196,6 +200,65 @@ export const g3ExpressionsWithBox: Chapter = {
         "□ = 19",
       ],
       tags: ["□を使った式", "文章題"],
+    },
+    {
+      id: "g3-box-hard-7",
+      difficulty: "hard",
+      question:
+        "たろうさんは、色紙を47まい持っています。友達から何まいかもらったので、全部で63まいになりました。式は47 + □ = 63です。□にあてはまる数を求めましょう。",
+      answer: "16",
+      steps: ["たし算の□はひき算で求める：□ = 63 - 47", "□ = 16"],
+      tags: ["□を使った式", "文章題"],
+    },
+    {
+      id: "g3-box-hard-8",
+      difficulty: "hard",
+      question:
+        "じろうさんは、はじめにいくらかお金をもっていました。380円の本を買ったら、のこりは150円になりました。式は □ - 380 = 150です。□にあてはまる数を求めましょう。",
+      answer: "530",
+      steps: ["ひき算の□はたし算で求める：□ = 380 + 150", "□ = 530"],
+      tags: ["□を使った式", "文章題"],
+    },
+    {
+      id: "g3-box-hard-9",
+      difficulty: "hard",
+      question:
+        "一人4羽ずつ、おりがみでつるをおりました。何人かいたので、全部で28羽できあがりました。式は4 × □ = 28です。□にあてはまる数を求めましょう。",
+      answer: "7",
+      steps: ["かけ算の□はわり算で求める：□ = 28 ÷ 4", "□ = 7"],
+      tags: ["□を使った式", "文章題"],
+    },
+    {
+      id: "g3-box-normal-8",
+      difficulty: "normal",
+      question: "17 + □ = 50 の、□にあてはまる数を求めましょう。",
+      answer: "33",
+      steps: ["たし算の□はひき算で求める：□ = 50 - 17", "□ = 33"],
+      tags: ["□を使った式"],
+    },
+    {
+      id: "g3-box-normal-9",
+      difficulty: "normal",
+      question: "□ - 51 = 34 の、□にあてはまる数を求めましょう。",
+      answer: "85",
+      steps: ["ひき算の□はたし算で求める：□ = 34 + 51", "□ = 85"],
+      tags: ["□を使った式"],
+    },
+    {
+      id: "g3-box-normal-10",
+      difficulty: "normal",
+      question: "□ × 7 = 63 の、□にあてはまる数を求めましょう。",
+      answer: "9",
+      steps: ["かけ算の□はわり算で求める：□ = 63 ÷ 7", "□ = 9"],
+      tags: ["□を使った式"],
+    },
+    {
+      id: "g3-box-normal-11",
+      difficulty: "normal",
+      question: "24 ÷ □ = 3 の、□にあてはまる数を求めましょう。",
+      answer: "8",
+      steps: ["わる数の□は「わられる数 ÷ 商」で求める：□ = 24 ÷ 3", "□ = 8"],
+      tags: ["□を使った式"],
     },
   ],
 };

@@ -3,6 +3,10 @@ import type { Chapter } from "@/lib/types";
 // 問題は下記の実在教材の設問・解答をもとに作成（AIによる自由生成は行っていない）。
 // - 宮城県教育センター「わくわくワーク」小学3年 算数 単元14「分数」
 //   https://www.edu-c.pref.miyagi.jp/tangen/math/ele3_math/answer/00.els3.kaitou.all.pdf
+// - 埼玉県「学力向上ワークシート」算数 小学3年 14 分数
+//   https://www.pref.saitama.lg.jp/documents/56538/3-14bunsuu-mondai.pdf
+//   （県の著作権ページには教育目的の一律利用許可の記載はなく、すたぺんドリルと
+//   同様に「個人利用の範囲で使用し、商用化・配布前に見直す」caveatを踏襲する）
 export const g3Fractions: Chapter = {
   id: "g3-fractions",
   grade: "小学3年",
@@ -158,6 +162,88 @@ export const g3Fractions: Chapter = {
         "すでに4こぬってあるので、あと 6 - 4 = 2こぬればよい",
       ],
       tags: ["分数の意味", "文章題"],
+    },
+    {
+      id: "g3-fraction-easy-6",
+      difficulty: "easy",
+      question: "2/7mは、1/7mの何こ分の長さですか。",
+      answer: "2",
+      steps: ["2/7は、1/7が2こ集まった大きさ"],
+      tags: ["分数の意味"],
+    },
+    {
+      id: "g3-fraction-easy-7",
+      difficulty: "easy",
+      question: "8/9mは、1/9mの何こ分の長さですか。",
+      answer: "8",
+      steps: ["8/9は、1/9が8こ集まった大きさ"],
+      tags: ["分数の意味"],
+    },
+    {
+      id: "g3-fraction-easy-8",
+      difficulty: "easy",
+      question: "5/6の分母はいくつですか。",
+      answer: "6",
+      steps: ["分数の下の数（この場合6）が分母"],
+      tags: ["分数の意味"],
+    },
+    {
+      id: "g3-fraction-normal-7",
+      difficulty: "normal",
+      question: "3/6 + 2/6 = ？",
+      answer: "5/6",
+      steps: ["分母が同じ分数のたし算は、分子どうしをたす", "3 + 2 = 5", "3/6 + 2/6 = 5/6"],
+      tags: ["分数のたし算"],
+    },
+    {
+      id: "g3-fraction-normal-8",
+      difficulty: "normal",
+      question: "5/9 + 2/9 = ？",
+      answer: "7/9",
+      steps: ["分母が同じ分数のたし算は、分子どうしをたす", "5 + 2 = 7", "5/9 + 2/9 = 7/9"],
+      tags: ["分数のたし算"],
+    },
+    {
+      id: "g3-fraction-normal-9",
+      difficulty: "normal",
+      question: "5/8 - 3/8 = ？",
+      answer: "2/8",
+      steps: ["分母が同じ分数のひき算は、分子どうしをひく", "5 - 3 = 2", "5/8 - 3/8 = 2/8"],
+      tags: ["分数のひき算"],
+    },
+    {
+      id: "g3-fraction-normal-10",
+      difficulty: "normal",
+      question: "9/10 - 6/10 = ？",
+      answer: "3/10",
+      steps: ["分母が同じ分数のひき算は、分子どうしをひく", "9 - 6 = 3", "9/10 - 6/10 = 3/10"],
+      tags: ["分数のひき算"],
+    },
+    {
+      id: "g3-fraction-normal-11",
+      difficulty: "normal",
+      question: "1 - 3/4 = ？",
+      answer: "1/4",
+      steps: ["1を4/4と考える", "4/4 - 3/4 = 1/4"],
+      tags: ["分数のひき算"],
+    },
+    {
+      id: "g3-fraction-normal-12",
+      difficulty: "normal",
+      question:
+        "1Lはいるビンにオレンジジュースが3/5L入っています。そのオレンジジュースを2/5L飲むと、のこりは何Lになりますか。",
+      answer: "1/5L",
+      steps: ["分母が同じ分数のひき算は、分子どうしをひく", "3/5 - 2/5 = 1/5", "のこりは1/5L"],
+      tags: ["分数のひき算", "文章題"],
+    },
+    {
+      id: "g3-fraction-normal-13",
+      difficulty: "normal",
+      question:
+        "7/10 と 0.8 では、どちらが大きいですか。等号・不等号（=, >, <）で答えましょう（7/10 ○ 0.8）。",
+      answer: "<",
+      steps: ["7/10を小数に直す：7/10 = 0.7", "0.7は0.8より小さい", "7/10 < 0.8"],
+      tags: ["分数と小数"],
     },
   ],
 };

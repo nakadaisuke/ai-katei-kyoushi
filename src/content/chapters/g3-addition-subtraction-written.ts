@@ -3,6 +3,10 @@ import type { Chapter } from "@/lib/types";
 // 問題は下記の実在教材の設問・解答をもとに作成（AIによる自由生成は行っていない）。
 // - 宮城県教育センター「わくわくワーク」小学3年 算数 単元4「たし算とひき算の筆算」
 //   https://www.edu-c.pref.miyagi.jp/tangen/math/ele3_math/answer/00.els3.kaitou.all.pdf
+// - 埼玉県「学力向上ワークシート」算数 小学3年 4 たし算とひき算の筆算
+//   https://www.pref.saitama.lg.jp/documents/56538/3-4tasizantohikizan-mondai.pdf
+//   （県の著作権ページには教育目的の一律利用許可の記載はなく、すたぺんドリルと
+//   同様に「個人利用の範囲で使用し、商用化・配布前に見直す」caveatを踏襲する）
 export const g3AdditionSubtractionWritten: Chapter = {
   id: "g3-addition-subtraction-written",
   grade: "小学3年",
@@ -226,6 +230,86 @@ export const g3AdditionSubtractionWritten: Chapter = {
         "百の位から順にくり下げて考える：507 - 279 = 228",
       ],
       tags: ["ひき算の筆算", "くり下がり"],
+    },
+    {
+      id: "g3-addsub-easy-6",
+      difficulty: "easy",
+      question: "364 + 125 = ？（筆算でやってみよう）",
+      answer: "489",
+      steps: ["一の位：4 + 5 = 9", "十の位：6 + 2 = 8", "百の位：3 + 1 = 4", "364 + 125 = 489"],
+      tags: ["たし算の筆算"],
+    },
+    {
+      id: "g3-addsub-easy-7",
+      difficulty: "easy",
+      question: "724 + 81 = ？（筆算でやってみよう）",
+      answer: "805",
+      steps: ["一の位：4 + 1 = 5", "十の位：2 + 8 = 10 → 0を書いて1くり上げ", "百の位：7 + 1(くり上がり) = 8", "724 + 81 = 805"],
+      tags: ["たし算の筆算", "くり上がり"],
+    },
+    {
+      id: "g3-addsub-easy-8",
+      difficulty: "easy",
+      question: "201 - 9 = ？（0のくり下がりに注意）",
+      answer: "192",
+      steps: ["一の位：1 - 9 はひけないので、十の位から借りたいが十の位も0", "百の位から順にくり下げて考える：201 - 9 = 192"],
+      tags: ["ひき算の筆算", "くり下がり"],
+    },
+    {
+      id: "g3-addsub-normal-8",
+      difficulty: "normal",
+      question: "258 + 413 = ？（筆算でやってみよう）",
+      answer: "671",
+      steps: ["一の位：8 + 3 = 11 → 1を書いて1くり上げ", "十の位：5 + 1 = 6 + 1(くり上がり) = 7", "百の位：2 + 4 = 6", "258 + 413 = 671"],
+      tags: ["たし算の筆算", "くり上がり"],
+    },
+    {
+      id: "g3-addsub-normal-9",
+      difficulty: "normal",
+      question: "185 + 697 = ？（筆算でやってみよう）",
+      answer: "882",
+      steps: ["一の位：5 + 7 = 12 → 2を書いて1くり上げ", "十の位：8 + 9 = 17 + 1(くり上がり) = 18 → 8を書いて1くり上げ", "百の位：1 + 6 = 7 + 1(くり上がり) = 8", "185 + 697 = 882"],
+      tags: ["たし算の筆算", "くり上がり"],
+    },
+    {
+      id: "g3-addsub-normal-10",
+      difficulty: "normal",
+      question: "738 - 412 = ？（筆算でやってみよう）",
+      answer: "326",
+      steps: ["一の位：8 - 2 = 6", "十の位：3 - 1 = 2", "百の位：7 - 4 = 3", "738 - 412 = 326"],
+      tags: ["ひき算の筆算"],
+    },
+    {
+      id: "g3-addsub-normal-11",
+      difficulty: "normal",
+      question: "594 - 267 = ？（筆算でやってみよう）",
+      answer: "327",
+      steps: ["一の位：4 - 7 はひけないので、十の位から1くり下げる → 14 - 7 = 7", "十の位：8（9から1くり下げ）- 6 = 2", "百の位：5 - 2 = 3", "594 - 267 = 327"],
+      tags: ["ひき算の筆算", "くり下がり"],
+    },
+    {
+      id: "g3-addsub-normal-12",
+      difficulty: "normal",
+      question: "285円のケーキと362円のクッキーを買います。代金はいくらになりますか。",
+      answer: "647",
+      steps: ["「合わせる」のでたし算 285 + 362 を考える", "285 + 362 = 647", "代金は647円"],
+      tags: ["たし算の筆算", "文章題"],
+    },
+    {
+      id: "g3-addsub-normal-13",
+      difficulty: "normal",
+      question: "425円を持って買い物に行きました。283円のキウイを買うと、のこりはいくらになりますか。",
+      answer: "142",
+      steps: ["「のこりを求める」のでひき算 425 - 283 を考える", "425 - 283 = 142", "のこりは142円"],
+      tags: ["ひき算の筆算", "文章題"],
+    },
+    {
+      id: "g3-addsub-hard-7",
+      difficulty: "hard",
+      question: "2584 + 1376 = ？（4桁の筆算）",
+      answer: "3960",
+      steps: ["一の位：4 + 6 = 10 → 0を書いて1くり上げ", "十の位：8 + 7 = 15 + 1(くり上がり) = 16 → 6を書いて1くり上げ", "百の位：5 + 3 = 8 + 1(くり上がり) = 9", "千の位：2 + 1 = 3", "2584 + 1376 = 3960"],
+      tags: ["たし算の筆算", "4桁", "くり上がり"],
     },
   ],
 };

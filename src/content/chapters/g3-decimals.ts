@@ -3,6 +3,10 @@ import type { Chapter } from "@/lib/types";
 // 問題は下記の実在教材の設問・解答をもとに作成（AIによる自由生成は行っていない）。
 // - 宮城県教育センター「わくわくワーク」小学3年 算数 単元12「小数」
 //   https://www.edu-c.pref.miyagi.jp/tangen/math/ele3_math/answer/00.els3.kaitou.all.pdf
+// - 埼玉県「学力向上ワークシート」算数 小学3年 12 小数
+//   https://www.pref.saitama.lg.jp/documents/56538/3-12syousu-mondai.pdf
+//   （県の著作権ページには教育目的の一律利用許可の記載はなく、すたぺんドリルと
+//   同様に「個人利用の範囲で使用し、商用化・配布前に見直す」caveatを踏襲する）
 export const g3Decimals: Chapter = {
   id: "g3-decimals",
   grade: "小学3年",
@@ -190,6 +194,86 @@ export const g3Decimals: Chapter = {
         "800g = 0.8kg（1000gで1kg）",
       ],
       tags: ["小数のしくみ", "文章題", "複合問題"],
+    },
+    {
+      id: "g3-decimal-easy-7",
+      difficulty: "easy",
+      question: "1dLは何Lですか。",
+      answer: "0.1",
+      steps: ["1dL（デシリットル）は、1Lを10等分した1こ分の大きさ", "1dL = 0.1L"],
+      tags: ["小数のしくみ", "単位換算"],
+    },
+    {
+      id: "g3-decimal-easy-8",
+      difficulty: "easy",
+      question: "2L5dLは何Lですか。",
+      answer: "2.5",
+      steps: ["5dL = 0.5L", "2L + 0.5L = 2.5L"],
+      tags: ["小数のしくみ", "単位換算"],
+    },
+    {
+      id: "g3-decimal-easy-9",
+      difficulty: "easy",
+      question: "8mmは何cmですか。",
+      answer: "0.8",
+      steps: ["1mm = 0.1cmなので", "8mm = 0.8cm"],
+      tags: ["小数のしくみ", "単位換算"],
+    },
+    {
+      id: "g3-decimal-normal-7",
+      difficulty: "normal",
+      question: "3.6cmは、0.1cmの何こ分ですか。",
+      answer: "36",
+      steps: ["3.6は0.1が36こ集まった数", "3.6 ÷ 0.1 = 36"],
+      tags: ["小数のしくみ"],
+    },
+    {
+      id: "g3-decimal-normal-8",
+      difficulty: "normal",
+      question: "3より0.1小さい数はいくつですか。",
+      answer: "2.9",
+      steps: ["3から0.1をひく", "3 - 0.1 = 2.9"],
+      tags: ["小数のしくみ"],
+    },
+    {
+      id: "g3-decimal-normal-9",
+      difficulty: "normal",
+      question: "0.3 と 0.8 では、どちらが大きいですか。等号・不等号（=, >, <）で答えましょう（0.3 ○ 0.8）。",
+      answer: "<",
+      steps: ["0.3は0.8より小さい", "0.3 < 0.8"],
+      tags: ["小数のしくみ"],
+    },
+    {
+      id: "g3-decimal-normal-10",
+      difficulty: "normal",
+      question: "6.1 と 5.9 では、どちらが大きいですか。等号・不等号（=, >, <）で答えましょう（6.1 ○ 5.9）。",
+      answer: ">",
+      steps: ["6.1は5.9より大きい", "6.1 > 5.9"],
+      tags: ["小数のしくみ"],
+    },
+    {
+      id: "g3-decimal-normal-11",
+      difficulty: "normal",
+      question: "1.2 + 0.9 = ？",
+      answer: "2.1",
+      steps: ["小数点をそろえて計算する", "1.2 + 0.9 = 2.1"],
+      tags: ["小数のたし算"],
+    },
+    {
+      id: "g3-decimal-normal-12",
+      difficulty: "normal",
+      question: "2.5 + 0.5 = ？",
+      answer: "3",
+      steps: ["小数点をそろえて計算する", "2.5 + 0.5 = 3.0 = 3"],
+      tags: ["小数のたし算"],
+    },
+    {
+      id: "g3-decimal-normal-13",
+      difficulty: "normal",
+      question: "1.6 - 0.7 = ？",
+      answer: "0.9",
+      steps: ["小数点をそろえて計算する", "1.6 - 0.7 = 0.9"],
+      tags: ["小数のひき算"],
     },
   ],
 };

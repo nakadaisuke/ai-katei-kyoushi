@@ -3,6 +3,10 @@ import type { Chapter } from "@/lib/types";
 // 問題は下記の実在教材の設問・解答をもとに作成（AIによる自由生成は行っていない）。
 // - 宮城県教育センター「わくわくワーク」小学3年 算数 単元8「大きい数のしくみ」
 //   https://www.edu-c.pref.miyagi.jp/tangen/math/ele3_math/answer/00.els3.kaitou.all.pdf
+// - 埼玉県「学力向上ワークシート」算数 小学3年 8 大きい数のしくみ
+//   https://www.pref.saitama.lg.jp/documents/56538/3-8ookiikazunosikumi-mondai.pdf
+//   （県の著作権ページには教育目的の一律利用許可の記載はなく、すたぺんドリルと
+//   同様に「個人利用の範囲で使用し、商用化・配布前に見直す」caveatを踏襲する）
 export const g3LargeNumbers: Chapter = {
   id: "g3-large-numbers",
   grade: "小学3年",
@@ -190,6 +194,84 @@ export const g3LargeNumbers: Chapter = {
       answer: "<",
       steps: ["万の位を比べる：7万 と 8万", "7万のほうが小さいので、70000 < 80000"],
       tags: ["数の大小"],
+    },
+    {
+      id: "g3-largenum-normal-9",
+      difficulty: "normal",
+      question: "3078000の百万の位の数字は何ですか。",
+      answer: "3",
+      steps: ["3078000を位ごとに見る：百万の位は3"],
+      tags: ["位取り"],
+    },
+    {
+      id: "g3-largenum-normal-10",
+      difficulty: "normal",
+      question: "3078000の一万の位の数字は何ですか。",
+      answer: "7",
+      steps: ["3078000を位ごとに見る：一万の位は7"],
+      tags: ["位取り"],
+    },
+    {
+      id: "g3-largenum-normal-11",
+      difficulty: "normal",
+      question: "1000を28こ集めた数はいくつですか。",
+      answer: "28000",
+      steps: ["1000 × 28 = 28000"],
+      tags: ["位取り"],
+    },
+    {
+      id: "g3-largenum-normal-12",
+      difficulty: "normal",
+      question: "450000は、1000を何こ集めた数ですか。",
+      answer: "450",
+      steps: ["450000 ÷ 1000 = 450", "1000を450こ集めた数"],
+      tags: ["位取り"],
+    },
+    {
+      id: "g3-largenum-normal-13",
+      difficulty: "normal",
+      question: "18000より3000大きい数はいくつですか。",
+      answer: "21000",
+      steps: ["18000 + 3000 = 21000"],
+      tags: ["数の大小"],
+    },
+    {
+      id: "g3-largenum-normal-14",
+      difficulty: "normal",
+      question: "610を10倍した数はいくつですか。",
+      answer: "6100",
+      steps: ["10倍すると位が1つ上がり、右はしに0が1こ増える", "610 × 10 = 6100"],
+      tags: ["10倍・10分の1"],
+    },
+    {
+      id: "g3-largenum-normal-15",
+      difficulty: "normal",
+      question: "610を10でわった数はいくつですか。",
+      answer: "61",
+      steps: ["10でわると位が1つ下がり、右はしの0が1こ減る", "610 ÷ 10 = 61"],
+      tags: ["10倍・10分の1"],
+    },
+    {
+      id: "g3-largenum-hard-7",
+      difficulty: "hard",
+      question: "千万を1こ、百万を5こ、十万を2こ、千を6こあわせた数はいくつですか。",
+      answer: "15206000",
+      steps: [
+        "千万×1 = 10000000",
+        "百万×5 = 5000000",
+        "十万×2 = 200000",
+        "千×6 = 6000",
+        "全部を足す：10000000 + 5000000 + 200000 + 6000 = 15206000",
+      ],
+      tags: ["位取り"],
+    },
+    {
+      id: "g3-largenum-hard-8",
+      difficulty: "hard",
+      question: "1000万を何こ集めると1億になりますか。",
+      answer: "10",
+      steps: ["1億 = 100000000", "1000万 = 10000000", "100000000 ÷ 10000000 = 10"],
+      tags: ["億の位"],
     },
   ],
 };

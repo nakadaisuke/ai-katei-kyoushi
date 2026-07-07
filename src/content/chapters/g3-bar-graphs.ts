@@ -3,6 +3,10 @@ import type { Chapter } from "@/lib/types";
 // 問題は下記の実在教材の設問・解答をもとに作成（AIによる自由生成は行っていない）。
 // - 宮城県教育センター「わくわくワーク」小学3年 算数 単元18「ぼうグラフと表」
 //   https://www.edu-c.pref.miyagi.jp/tangen/math/ele3_math/answer/00.els3.kaitou.all.pdf
+// - 埼玉県「学力向上ワークシート」算数 小学3年 18 ぼうグラフと表
+//   https://www.pref.saitama.lg.jp/documents/56538/3-18bougurahu-mondai.pdf
+//   （県の著作権ページには教育目的の一律利用許可の記載はなく、すたぺんドリルと
+//   同様に「個人利用の範囲で使用し、商用化・配布前に見直す」caveatを踏襲する）
 export const g3BarGraphs: Chapter = {
   id: "g3-bar-graphs",
   grade: "小学3年",
@@ -306,6 +310,158 @@ export const g3BarGraphs: Chapter = {
       question: "同じ表で、（ウ）は何の数の合計を表していますか。",
       answer: "円",
       steps: ["ウは「円」の列のいちばん下、合計の行にある", "円の数の合計を表している"],
+      tags: ["表の読み取り"],
+    },
+    {
+      id: "g3-bargraph-easy-6",
+      difficulty: "easy",
+      question: "下の表は、家の前を通ったのりものの数を調べたものです。2番目に多く通ったのりものは何ですか。",
+      answer: "トラック",
+      figure: {
+        kind: "table",
+        columns: ["台数（台）"],
+        rows: [
+          { label: "じょう用車", cells: [15] },
+          { label: "トラック", cells: [6] },
+          { label: "自転車", cells: [5] },
+          { label: "バイク", cells: [3] },
+          { label: "その他", cells: [8] },
+        ],
+      },
+      steps: ["それぞれの台数をくらべる：15, 6, 5, 3, 8", "いちばん多いのはじょう用車(15)、2番目はトラック(6)"],
+      tags: ["表の読み取り"],
+    },
+    {
+      id: "g3-bargraph-normal-7",
+      difficulty: "normal",
+      question: "同じ表で、じょう用車の台数は、自転車の台数の何倍ですか。",
+      answer: "3",
+      figure: {
+        kind: "table",
+        columns: ["台数（台）"],
+        rows: [
+          { label: "じょう用車", cells: [15] },
+          { label: "トラック", cells: [6] },
+          { label: "自転車", cells: [5] },
+          { label: "バイク", cells: [3] },
+          { label: "その他", cells: [8] },
+        ],
+      },
+      steps: ["じょう用車は15台、自転車は5台", "15 ÷ 5 = 3", "3倍"],
+      tags: ["表の読み取り"],
+    },
+    {
+      id: "g3-bargraph-normal-8",
+      difficulty: "normal",
+      question: "同じ表で、バイクの台数は、トラックの台数の何分の一ですか。",
+      answer: "2分の1",
+      figure: {
+        kind: "table",
+        columns: ["台数（台）"],
+        rows: [
+          { label: "じょう用車", cells: [15] },
+          { label: "トラック", cells: [6] },
+          { label: "自転車", cells: [5] },
+          { label: "バイク", cells: [3] },
+          { label: "その他", cells: [8] },
+        ],
+      },
+      steps: ["バイクは3台、トラックは6台", "3は6の半分（2分の1）"],
+      tags: ["表の読み取り"],
+    },
+    {
+      id: "g3-bargraph-easy-7",
+      difficulty: "easy",
+      question: "同じ表で、家の前を通ったのりものは全部で何台ですか。",
+      answer: "37",
+      figure: {
+        kind: "table",
+        columns: ["台数（台）"],
+        rows: [
+          { label: "じょう用車", cells: [15] },
+          { label: "トラック", cells: [6] },
+          { label: "自転車", cells: [5] },
+          { label: "バイク", cells: [3] },
+          { label: "その他", cells: [8] },
+        ],
+      },
+      steps: ["それぞれの台数をすべてたす", "15 + 6 + 5 + 3 + 8 = 37", "合計37台"],
+      tags: ["表の読み取り", "文章題"],
+    },
+    {
+      id: "g3-bargraph-normal-9",
+      difficulty: "normal",
+      question: "下の表は、図書室でかりられた本の数を3か月分まとめたものです。11月に借りられた物語は何さつですか。",
+      answer: "23",
+      figure: {
+        kind: "table",
+        columns: ["9月", "10月", "11月", "合計"],
+        rows: [
+          { label: "物語", cells: [17, 28, 23, 68] },
+          { label: "伝記", cells: [12, 24, 19, 55] },
+          { label: "図かん", cells: [7, 12, 9, 28] },
+          { label: "その他", cells: [15, 20, 16, 51] },
+          { label: "合計", cells: [51, 84, 67, 202] },
+        ],
+      },
+      steps: ["表の「物語」の行、「11月」の列を見る", "23さつ"],
+      tags: ["表の読み取り"],
+    },
+    {
+      id: "g3-bargraph-normal-10",
+      difficulty: "normal",
+      question: "同じ表で、9月から11月までにかりられた伝記の合計は何さつですか。",
+      answer: "55",
+      figure: {
+        kind: "table",
+        columns: ["9月", "10月", "11月", "合計"],
+        rows: [
+          { label: "物語", cells: [17, 28, 23, 68] },
+          { label: "伝記", cells: [12, 24, 19, 55] },
+          { label: "図かん", cells: [7, 12, 9, 28] },
+          { label: "その他", cells: [15, 20, 16, 51] },
+          { label: "合計", cells: [51, 84, 67, 202] },
+        ],
+      },
+      steps: ["伝記の行の合計を見る", "12 + 24 + 19 = 55"],
+      tags: ["表の読み取り"],
+    },
+    {
+      id: "g3-bargraph-hard-5",
+      difficulty: "hard",
+      question: "同じ表で、3か月間でかりられた本の合計は何さつですか。",
+      answer: "202",
+      figure: {
+        kind: "table",
+        columns: ["9月", "10月", "11月", "合計"],
+        rows: [
+          { label: "物語", cells: [17, 28, 23, 68] },
+          { label: "伝記", cells: [12, 24, 19, 55] },
+          { label: "図かん", cells: [7, 12, 9, 28] },
+          { label: "その他", cells: [15, 20, 16, 51] },
+          { label: "合計", cells: [51, 84, 67, 202] },
+        ],
+      },
+      steps: ["合計の列のいちばん下の数を見る", "68 + 55 + 28 + 51 = 202"],
+      tags: ["表の読み取り"],
+    },
+    {
+      id: "g3-bargraph-hard-6",
+      difficulty: "hard",
+      question: "同じ表で、いちばん多くかりられた本の種類は何ですか。",
+      answer: "物語",
+      figure: {
+        kind: "table",
+        columns: ["9月", "10月", "11月", "合計"],
+        rows: [
+          { label: "物語", cells: [17, 28, 23, 68] },
+          { label: "伝記", cells: [12, 24, 19, 55] },
+          { label: "図かん", cells: [7, 12, 9, 28] },
+          { label: "その他", cells: [15, 20, 16, 51] },
+          { label: "合計", cells: [51, 84, 67, 202] },
+        ],
+      },
+      steps: ["合計の列をくらべる：物語68、伝記55、図かん28、その他51", "いちばん多いのは物語"],
       tags: ["表の読み取り"],
     },
   ],

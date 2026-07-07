@@ -3,6 +3,12 @@ import type { Chapter } from "@/lib/types";
 // 問題は下記の実在教材の設問・解答をもとに作成（AIによる自由生成は行っていない）。
 // - 宮城県教育センター「わくわくワーク」小学3年 算数 単元17「三角形と角」
 //   https://www.edu-c.pref.miyagi.jp/tangen/math/ele3_math/answer/00.els3.kaitou.all.pdf
+// - 埼玉県「学力向上ワークシート」算数 小学3年 17 三角形
+//   https://www.pref.saitama.lg.jp/documents/56538/3-17sankakkei-mondai.pdf
+// - 大阪府「小学校算数・ワークブック」3年 三角形と角①〜⑤
+//   https://www.pref.osaka.lg.jp/documents/9096/h26323-emw-3c121~5.pdf
+//   （県・府の著作権ページには教育目的の一律利用許可の記載はなく、すたぺんドリルと
+//   同様に「個人利用の範囲で使用し、商用化・配布前に見直す」caveatを踏襲する）
 export const g3Triangles: Chapter = {
   id: "g3-triangles",
   grade: "小学3年",
@@ -175,6 +181,86 @@ export const g3Triangles: Chapter = {
       answer: "27",
       steps: ["正三角形は3つの辺の長さがすべて等しい", "9 × 3 = 27", "まわりの長さは27cm"],
       tags: ["まわりの長さ", "文章題"],
+    },
+    {
+      id: "g3-triangle-easy-6",
+      difficulty: "easy",
+      question: "二等辺三角形で、角の大きさの等しい角はいくつありますか。",
+      answer: "2",
+      steps: ["二等辺三角形は、2つの辺の長さが等しい三角形", "等しい2つの辺にはさまれた角どうしが同じ大きさになる", "角の大きさの等しい角は2つ"],
+      tags: ["三角形の用語"],
+    },
+    {
+      id: "g3-triangle-easy-7",
+      difficulty: "easy",
+      question: "正三角形で、角の大きさの等しい角はいくつありますか。",
+      answer: "3",
+      steps: ["正三角形は、3つの辺の長さがすべて等しい三角形", "3つの辺が等しいので、3つの角もすべて等しくなる", "角の大きさの等しい角は3つ"],
+      tags: ["三角形の用語"],
+    },
+    {
+      id: "g3-triangle-normal-7",
+      difficulty: "normal",
+      question: "4cmのストローを1本、5cmのストローを2本つなげて三角形を作ります。何三角形になりますか。",
+      answer: "二等辺三角形",
+      steps: ["辺の長さは4cm・5cm・5cmで、5cmの辺が2つある", "2つの辺の長さが等しいので、二等辺三角形"],
+      tags: ["三角形の分類"],
+    },
+    {
+      id: "g3-triangle-normal-8",
+      difficulty: "normal",
+      question: "2cmのストローを3本つなげて三角形を作ります。何三角形になりますか。",
+      answer: "正三角形",
+      steps: ["辺の長さは2cm・2cm・2cmで、3つの辺の長さがすべて等しい", "正三角形"],
+      tags: ["三角形の分類"],
+    },
+    {
+      id: "g3-triangle-normal-9",
+      difficulty: "normal",
+      question: "4cmのストローを2本、5cmのストローを1本つなげて三角形を作ります。何三角形になりますか。",
+      answer: "二等辺三角形",
+      steps: ["辺の長さは4cm・4cm・5cmで、4cmの辺が2つある", "2つの辺の長さが等しいので、二等辺三角形"],
+      tags: ["三角形の分類"],
+    },
+    {
+      id: "g3-triangle-normal-10",
+      difficulty: "normal",
+      question: "4cmのストローを3本つなげて三角形を作ります。何三角形になりますか。",
+      answer: "正三角形",
+      steps: ["辺の長さは4cm・4cm・4cmで、3つの辺の長さがすべて等しい", "正三角形"],
+      tags: ["三角形の分類"],
+    },
+    {
+      id: "g3-triangle-normal-11",
+      difficulty: "normal",
+      question: "2cmのストローを1本、5cmのストローを2本つなげて三角形を作ります。何三角形になりますか。",
+      answer: "二等辺三角形",
+      steps: ["辺の長さは2cm・5cm・5cmで、5cmの辺が2つある", "2つの辺の長さが等しいので、二等辺三角形"],
+      tags: ["三角形の分類"],
+    },
+    {
+      id: "g3-triangle-normal-12",
+      difficulty: "normal",
+      question: "3つの辺の長さが、5cm、7cm、7cmの三角形は、何三角形ですか。",
+      answer: "二等辺三角形",
+      steps: ["7cmの辺が2つあり、長さが等しいので、二等辺三角形"],
+      tags: ["三角形の分類"],
+    },
+    {
+      id: "g3-triangle-normal-13",
+      difficulty: "normal",
+      question: "1つの辺の長さが6cmの正三角形の、まわりの長さは何cmですか。",
+      answer: "18",
+      steps: ["正三角形は3つの辺の長さがすべて等しい", "6 × 3 = 18", "まわりの長さは18cm"],
+      tags: ["まわりの長さ", "文章題"],
+    },
+    {
+      id: "g3-triangle-hard-5",
+      difficulty: "hard",
+      question: "5cmのストローを1本、2cmのストローを2本つなげようとしても、三角形を作ることができません。作れますか、作れませんか。",
+      answer: "作れない",
+      steps: ["2cmのストロー2本を5cmのストローの両はしから伸ばしても、2 + 2 = 4cmで5cmにとどかない", "3本のストローの両はしがくっつかないので、三角形は作れない"],
+      tags: ["三角形の分類"],
     },
   ],
 };

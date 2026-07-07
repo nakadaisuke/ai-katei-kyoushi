@@ -3,6 +3,10 @@ import type { Chapter } from "@/lib/types";
 // 問題は下記の実在教材の設問・解答をもとに作成（AIによる自由生成は行っていない）。
 // - 宮城県教育センター「わくわくワーク」小学3年 算数 単元11「円と球」
 //   https://www.edu-c.pref.miyagi.jp/tangen/math/ele3_math/answer/00.els3.kaitou.all.pdf
+// - 埼玉県「学力向上ワークシート」算数 小学3年 11 円と球
+//   https://www.pref.saitama.lg.jp/documents/56538/3-11entokyu-mondai.pdf
+//   （県の著作権ページには教育目的の一律利用許可の記載はなく、すたぺんドリルと
+//   同様に「個人利用の範囲で使用し、商用化・配布前に見直す」caveatを踏襲する）
 export const g3CircleSphere: Chapter = {
   id: "g3-circle-sphere",
   grade: "小学3年",
@@ -168,6 +172,88 @@ export const g3CircleSphere: Chapter = {
       steps: [
         "まず直径を求める：半径 × 2 = 3 × 2 = 6cm",
         "直径×こ数を求める：6 × 2 = 12cm",
+      ],
+      tags: ["半径と直径", "文章題", "複合問題"],
+    },
+    {
+      id: "g3-circle-easy-5",
+      difficulty: "easy",
+      question:
+        "次の文は正しいですか、まちがっていますか。「半径の長さは、直径の2倍である」",
+      answer: "まちがっている",
+      steps: ["正しくは「直径 ＝ 半径 × 2」なので、この文は逆になっている", "まちがっている"],
+      tags: ["半径と直径"],
+    },
+    {
+      id: "g3-circle-easy-6",
+      difficulty: "easy",
+      question: "次の文は正しいですか、まちがっていますか。「1つの円では、半径はみんな同じ長さである」",
+      answer: "正しい",
+      steps: ["同じ円の半径（中心からまわりまでの直線）は、どこをとっても同じ長さになる", "正しい"],
+      tags: ["円の用語"],
+    },
+    {
+      id: "g3-circle-normal-6",
+      difficulty: "normal",
+      question: "1辺の長さが8cmの正方形の中に、ぴったりと円が1つ入っています。この円の半径は何cmですか。",
+      answer: "4",
+      steps: ["円の直径が正方形の1辺の長さと同じになる：直径＝8cm", "半径 ＝ 直径 ÷ 2 ＝ 8 ÷ 2 ＝ 4cm"],
+      tags: ["半径と直径", "文章題"],
+    },
+    {
+      id: "g3-circle-normal-7",
+      difficulty: "normal",
+      question: "1辺の長さが12cmの正方形の中に、ぴったりと円が1つ入っています。この円の半径は何cmですか。",
+      answer: "6",
+      steps: ["円の直径が正方形の1辺の長さと同じになる：直径＝12cm", "半径 ＝ 直径 ÷ 2 ＝ 12 ÷ 2 ＝ 6cm"],
+      tags: ["半径と直径", "文章題"],
+    },
+    {
+      id: "g3-circle-hard-6",
+      difficulty: "hard",
+      question: "直径4cmの円を2つ、ぴったりとくっつけて横に並べました。両はしを結ぶ直線の長さは何cmですか。",
+      answer: "8",
+      steps: ["直径 × こ数を求める", "4 × 2 = 8cm"],
+      tags: ["半径と直径", "文章題"],
+    },
+    {
+      id: "g3-circle-hard-7",
+      difficulty: "hard",
+      question: "直径6cmの円を3つ、ぴったりとくっつけて横に並べました。両はしを結ぶ直線の長さは何cmですか。",
+      answer: "18",
+      steps: ["直径 × こ数を求める", "6 × 3 = 18cm"],
+      tags: ["半径と直径", "文章題"],
+    },
+    {
+      id: "g3-circle-hard-8",
+      difficulty: "hard",
+      question:
+        "半径4cmのボールが3こ、ぴったり横に並んで入っている箱があります。この箱のたての長さは何cmですか。",
+      answer: "8",
+      steps: ["たての長さは、ボール1こ分の直径と同じになる", "直径 ＝ 半径 × 2 ＝ 4 × 2 ＝ 8cm"],
+      tags: ["半径と直径", "文章題", "複合問題"],
+    },
+    {
+      id: "g3-circle-hard-9",
+      difficulty: "hard",
+      question:
+        "半径4cmのボールが3こ、ぴったり横に並んで入っている箱があります。この箱の横の長さは何cmですか。",
+      answer: "24",
+      steps: [
+        "まず直径を求める：半径 × 2 ＝ 4 × 2 ＝ 8cm",
+        "直径 × こ数を求める：8 × 3 ＝ 24cm",
+      ],
+      tags: ["半径と直径", "文章題", "複合問題"],
+    },
+    {
+      id: "g3-circle-hard-10",
+      difficulty: "hard",
+      question:
+        "たての長さが80cm、横の長さが120cmの紙に、同じ大きさの円が、たてに2こ、横に3こ、ぴったり並んでいます。この円の半径は何cmですか。",
+      answer: "20",
+      steps: [
+        "たての長さを使って直径を求める：円がたてに2つ並んでいるので、80 ÷ 2 ＝ 40cm（直径）",
+        "半径 ＝ 直径 ÷ 2 ＝ 40 ÷ 2 ＝ 20cm",
       ],
       tags: ["半径と直径", "文章題", "複合問題"],
     },
