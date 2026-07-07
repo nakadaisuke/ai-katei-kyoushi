@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/supabase/database.types";
 import type { Chapter } from "@/lib/types";
+import { allProblems } from "@/lib/types";
 
 type Client = SupabaseClient<Database>;
 export type AttemptRow = Database["public"]["Tables"]["attempts"]["Row"];
@@ -14,6 +15,7 @@ export interface RecordAttemptInput {
   usedHintLevels: number;
   requestedReexplain: boolean;
   durationMs: number;
+  isQuiz?: boolean;
 }
 
 export async function recordAttempt(client: Client, input: RecordAttemptInput) {
@@ -26,6 +28,7 @@ export async function recordAttempt(client: Client, input: RecordAttemptInput) {
     used_hint_levels: input.usedHintLevels,
     requested_reexplain: input.requestedReexplain,
     duration_ms: input.durationMs,
+    is_quiz: input.isQuiz ?? false,
   });
   if (error) throw error;
 }
@@ -71,12 +74,30 @@ export async function fetchChapterProgress(
 ) {
   const { data, error } = await client
     .from("chapter_progress")
-    .select("completed_at")
+    .select("completed_at, current_index")
     .eq("student_id", studentId)
     .eq("chapter_id", chapterId)
     .maybeSingle();
   if (error) throw error;
   return data;
+}
+
+// 単元の途中でリロード・離脱しても、次にキューのどこから再開すべきかを保存する。
+// completed_atとは独立して更新し、小テストまで終わったらmarkChapterCompleteが
+// completed_atを立てる（このindexは以後参照されなくなる）。
+export async function saveResumeIndex(
+  client: Client,
+  studentId: string,
+  chapterId: string,
+  currentIndex: number,
+) {
+  const { error } = await client
+    .from("chapter_progress")
+    .upsert(
+      { student_id: studentId, chapter_id: chapterId, current_index: currentIndex },
+      { onConflict: "student_id,chapter_id" },
+    );
+  if (error) throw error;
 }
 
 export interface TagStat {
@@ -86,7 +107,7 @@ export interface TagStat {
 }
 
 export function summarizeTagStats(attempts: AttemptRow[], chapter: Chapter): TagStat[] {
-  const problemById = new Map(chapter.problems.map((p) => [p.id, p]));
+  const problemById = new Map(allProblems(chapter).map((p) => [p.id, p]));
   const stats = new Map<string, TagStat>();
 
   for (const attempt of attempts) {

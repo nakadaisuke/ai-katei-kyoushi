@@ -1,29 +1,50 @@
 "use client";
 
-import { useRef, useState } from "react";
-import Link from "next/link";
+import { useMemo, useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { isCorrectAnswer } from "@/lib/grading";
-import { recordAttempt, markChapterComplete } from "@/lib/progress";
+import { recordAttempt, markChapterComplete, saveResumeIndex } from "@/lib/progress";
 import { pickReviewProblem } from "@/lib/review";
+import { pickQuizProblems } from "@/lib/quiz";
 import type { Chapter, Problem } from "@/lib/types";
 import { ExplanationPanel } from "@/components/ExplanationPanel";
 import { ProblemView } from "@/components/ProblemView";
+import { QuizProblemView } from "@/components/QuizProblemView";
+import { QuizReview, type QuizResultEntry } from "@/components/QuizReview";
 
-type Phase = "explanation" | number | "done";
+type Section = "practice" | "assessment";
+type Phase = "explanation" | number | "quiz" | "quiz-review";
+
+const QUIZ_LENGTH = 5;
 
 export function ChapterView({
   chapter,
   studentId,
+  initialIndex,
 }: {
   chapter: Chapter;
   studentId: string;
+  initialIndex?: number | null;
 }) {
-  const [phase, setPhase] = useState<Phase>("explanation");
+  const queue = useMemo(
+    () => [
+      ...chapter.practiceProblems.map((p) => ({ problem: p, section: "practice" as Section })),
+      ...chapter.assessmentProblems.map((p) => ({ problem: p, section: "assessment" as Section })),
+    ],
+    [chapter],
+  );
+  const quizProblems = useMemo(() => pickQuizProblems(chapter, QUIZ_LENGTH), [chapter]);
+
+  const initialPhase: Phase =
+    initialIndex == null ? "explanation" : initialIndex >= queue.length ? "quiz" : initialIndex;
+
+  const [phase, setPhase] = useState<Phase>(initialPhase);
   const [reviewProblem, setReviewProblem] = useState<Problem | null>(null);
   const [result, setResult] = useState<{ correct: boolean } | null>(null);
   const [reexplanation, setReexplanation] = useState<string | null>(null);
   const [reexplainLoading, setReexplainLoading] = useState(false);
+  const [quizIndex, setQuizIndex] = useState(0);
+  const [quizResults, setQuizResults] = useState<QuizResultEntry[]>([]);
 
   const supabaseRef = useRef(createClient());
   const startTimeRef = useRef(Date.now());
@@ -32,11 +53,19 @@ export function ChapterView({
   const pendingAnswerRef = useRef<{ studentAnswer: string; correct: boolean } | null>(
     null,
   );
-  const seenProblemIdsRef = useRef<Set<string>>(new Set());
-  const pendingNextPhaseRef = useRef<number | "done" | null>(null);
+  const seenProblemIdsRef = useRef<Set<string>>(
+    new Set(
+      typeof initialPhase === "number"
+        ? queue.slice(0, initialPhase + 1).map((q) => q.problem.id)
+        : initialPhase === "quiz"
+          ? queue.map((q) => q.problem.id)
+          : [],
+    ),
+  );
+  const pendingNextPhaseRef = useRef<number | "quiz" | null>(null);
 
   const activeProblem: Problem | null =
-    reviewProblem ?? (typeof phase === "number" ? chapter.problems[phase] : null);
+    reviewProblem ?? (typeof phase === "number" ? queue[phase].problem : null);
 
   function resetTransientState() {
     setResult(null);
@@ -50,14 +79,23 @@ export function ChapterView({
   function startProblem(idx: number) {
     setReviewProblem(null);
     setPhase(idx);
-    seenProblemIdsRef.current.add(chapter.problems[idx].id);
+    seenProblemIdsRef.current.add(queue[idx].problem.id);
     resetTransientState();
+    saveResumeIndex(supabaseRef.current, studentId, chapter.id, idx).catch(() => {});
   }
 
   function startReview(problem: Problem) {
     seenProblemIdsRef.current.add(problem.id);
     setReviewProblem(problem);
     resetTransientState();
+  }
+
+  function startQuiz() {
+    setReviewProblem(null);
+    setQuizIndex(0);
+    setQuizResults([]);
+    setPhase("quiz");
+    saveResumeIndex(supabaseRef.current, studentId, chapter.id, queue.length).catch(() => {});
   }
 
   function handleSubmit(raw: string) {
@@ -134,10 +172,8 @@ export function ChapterView({
     if (reviewProblem) {
       const next = pendingNextPhaseRef.current;
       pendingNextPhaseRef.current = null;
-      if (next === "done") {
-        await markChapterComplete(supabase, studentId, chapter.id);
-        setReviewProblem(null);
-        setPhase("done");
+      if (next === "quiz") {
+        startQuiz();
       } else if (typeof next === "number") {
         startProblem(next);
       }
@@ -145,8 +181,8 @@ export function ChapterView({
     }
 
     const currentIdx = phase as number;
-    const nextPhase: number | "done" =
-      currentIdx + 1 >= chapter.problems.length ? "done" : currentIdx + 1;
+    const nextPhase: number | "quiz" =
+      currentIdx + 1 >= queue.length ? "quiz" : currentIdx + 1;
 
     // 「よく分からない」と答えた問題は、AI再解説のあとに同じタグの別問題で理解を確認する
     if (requestedReexplainRef.current) {
@@ -158,11 +194,38 @@ export function ChapterView({
       }
     }
 
-    if (nextPhase === "done") {
-      await markChapterComplete(supabase, studentId, chapter.id);
-      setPhase("done");
+    if (nextPhase === "quiz") {
+      startQuiz();
     } else {
       startProblem(nextPhase);
+    }
+  }
+
+  async function handleQuizSubmit(raw: string) {
+    const problem = quizProblems[quizIndex];
+    const correct = isCorrectAnswer(raw, problem.answer);
+    const entry: QuizResultEntry = { problem, studentAnswer: raw, correct };
+    const updated = [...quizResults, entry];
+    setQuizResults(updated);
+
+    recordAttempt(supabaseRef.current, {
+      studentId,
+      chapterId: chapter.id,
+      problemId: problem.id,
+      studentAnswer: raw,
+      correct,
+      usedHintLevels: 0,
+      requestedReexplain: false,
+      durationMs: 0,
+      isQuiz: true,
+    }).catch(() => {});
+
+    const nextIdx = quizIndex + 1;
+    if (nextIdx >= quizProblems.length) {
+      await markChapterComplete(supabaseRef.current, studentId, chapter.id);
+      setPhase("quiz-review");
+    } else {
+      setQuizIndex(nextIdx);
     }
   }
 
@@ -170,23 +233,32 @@ export function ChapterView({
     return <ExplanationPanel chapter={chapter} onNext={() => startProblem(0)} />;
   }
 
-  if (phase === "done") {
+  if (phase === "quiz") {
     return (
-      <div className="flex flex-col items-center gap-4 rounded border p-8 text-center">
-        <p className="text-xl font-bold">この単元はおしまいです！</p>
-        <p className="text-sm text-gray-500">おつかれさまでした。</p>
-        <Link href="/" className="rounded bg-blue-600 px-4 py-2 font-medium text-white">
-          学習マップに戻る
-        </Link>
-      </div>
+      <QuizProblemView
+        problem={quizProblems[quizIndex]}
+        index={quizIndex}
+        total={quizProblems.length}
+        onSubmit={handleQuizSubmit}
+      />
     );
+  }
+
+  if (phase === "quiz-review") {
+    return <QuizReview results={quizResults} />;
   }
 
   if (!activeProblem) return null;
 
+  const practiceCount = chapter.practiceProblems.length;
+  const currentSection = reviewProblem
+    ? null
+    : queue[phase as number].section;
   const headerLabel = reviewProblem
     ? "確認問題"
-    : `問題 ${(phase as number) + 1} / ${chapter.problems.length}`;
+    : currentSection === "practice"
+      ? `練習問題 ${(phase as number) + 1} / ${practiceCount}`
+      : `問題 ${(phase as number) - practiceCount + 1} / ${chapter.assessmentProblems.length}`;
 
   return (
     <ProblemView

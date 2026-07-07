@@ -1,4 +1,5 @@
 import type { Chapter, Problem } from "@/lib/types";
+import { allProblems } from "@/lib/types";
 
 // 「よく分からない」を押した生徒に、AI再解説のあと同じタグを持つ別の実在問題を
 // もう一問解かせて理解を確認する。問題文自体はAI生成せず、既存の教材データから選ぶ
@@ -8,7 +9,7 @@ export function pickReviewProblem(
   strugglingProblem: Problem,
   excludeIds: Set<string>,
 ): Problem | null {
-  const candidates = chapter.problems.filter(
+  const candidates = allProblems(chapter).filter(
     (p) =>
       p.id !== strugglingProblem.id &&
       !excludeIds.has(p.id) &&

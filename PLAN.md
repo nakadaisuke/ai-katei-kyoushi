@@ -2,12 +2,14 @@
 
 ## 0. このフェーズのゴール
 
-学年・単元を1つに絞り、「解説 → 3段階の演習 → ノート回答 → 採点＋途中式 → 分からなければAI個別再解説 → ヒント」という学習フロー全体を、実際に動くWebアプリとして通しで作る。保護者ダッシュボードも最小構成で用意する。
+**フェーズ1（完了）**: 単元を1つ（小3わり算）に絞り、「解説 → 演習 → ノート回答 → 採点＋途中式 → 分からなければAI個別再解説 → ヒント」という学習フロー全体を、実際に動くWebアプリとして通しで作った。保護者ダッシュボードも用意した。
 
-- **対象単元**: 小学3年生「わり算（あまりのないわり算・あまりのあるわり算）」
-- **対象外（今回はやらない）**: 複数単元のカリキュラム管理、章をまたぐ小テストと復習ロック
-  → これらはこの単元1本の学習フローが実際に良い体験になってから、横展開するときに設計する
-- 認証・DB・親子アカウント連携（Supabase）は保護者が別デバイスから進捗を見る要件のため、今回のスコープに含める
+**フェーズ2（完了）**: 4年生・5年生への展開を見据え、以下を拡張した。
+- 学年選択 → 単元選択という入口に変更（`getAvailableGrades()`で実データのある学年のみ表示、他は「準備中」）
+- 単元内フローを4段階「解説 → 練習問題（解説付き） → 簡単/普通/チャレンジ（同じく途中式は都度表示） → 章末小テスト（5問、全問終了後にまとめて結果表示）」に拡張
+- 小学3年生の算数カリキュラムを12単元（実質13単元分、「倍の計算」はわり算単元に統合）すべて作成
+
+- **対象外（引き続きスコープ外）**: 4年・5年生以降の学年、応用問題（受験問題）データの選定・組み込み、子ども自身の個別ログイン
 
 ## 1. 技術構成
 
@@ -71,7 +73,7 @@ RLS（Row Level Security）方針：
 
 将来的な拡張（今回は対象外）：子どもが個別ログインする方式にしたい場合、`students`テーブルに`auth_user_id`を追加し招待コードで紐付ける形に移行できる。
 
-## 2. ディレクトリ構成（予定）
+## 2. ディレクトリ構成（現状）
 
 ```
 AI家庭教師/
@@ -79,66 +81,88 @@ AI家庭教師/
   package.json
   next.config.ts
   supabase/
-    migrations/0001_init.sql        # students / attempts / chapter_progress + RLS
+    migrations/
+      0001_init.sql                # students / attempts / chapter_progress + RLS
+      0002_add_is_quiz.sql         # attempts.is_quiz（章末小テストの回答を区別するフラグ）
   src/
     proxy.ts                        # 未ログイン時にlogin/signupへリダイレクト（Next.js 16でmiddleware.tsから改称）
     app/
       login/page.tsx                # 保護者ログイン
       signup/page.tsx               # 保護者サインアップ
       profiles/page.tsx             # 子どもプロファイル選択・作成（ログイン後の最初の画面）
-      page.tsx                      # 生徒ダッシュボード（選択中プロファイルの学習マップ）
-      chapter/[chapterId]/page.tsx  # 学習画面（解説→問題→回答→採点）
-      parent/page.tsx               # 保護者ダッシュボード（子どもプロファイル一覧→進捗）
+      page.tsx                      # 学年選択画面（getAvailableGrades()を一覧表示、子どもの学年を強調）
+      grade/[grade]/page.tsx        # 単元一覧（その学年の単元カード＋進捗バー）
+      chapter/[chapterId]/page.tsx  # 学習画面（ChapterView本体をレンダリング）
+      chapter/[chapterId]/ChapterView.tsx  # 学習フローの状態機械（後述）
+      parent/page.tsx               # 保護者ダッシュボード（子どもプロファイル一覧）
+      parent/[studentId]/page.tsx   # 保護者ダッシュボード詳細（進捗・苦手分析）
       api/
         hint/route.ts               # ヒント生成（段階的）
         reexplain/route.ts          # 分からないボタン→AIによる別アプローチの解説
     content/
-      chapters/g3-division.ts       # 単元データ本体（解説文・問題・正解・途中式・タグ）
+      curriculum.ts                  # 全学年・全単元のレジストリ（getChapter/getChaptersByGrade/getAvailableGrades）
+      chapters/g3-*.ts               # 学年・単元ごとのデータ本体（12ファイル、詳細は5.5節）
     lib/
       supabase/
-        client.ts                   # ブラウザ用Supabaseクライアント（anon key）
-        server.ts                   # Route Handler/Server Component用（cookieベースセッション）
+        client.ts / server.ts / proxy.ts / database.types.ts
+      ai/
+        model.ts                    # AI_PROVIDER/AI_MODEL環境変数からモデルを返す（プロバイダー切替の唯一の場所）
+        tutor.ts                    # generateHint / generateReexplanation
       progress.ts                   # attempts/chapter_progressの読み書き（Supabase経由）
-      claude.ts                     # Anthropic API呼び出しの共通関数
-      types.ts                      # 共有型定義
+      review.ts                     # pickReviewProblem（理解不足時の確認問題選定）
+      quiz.ts                       # pickQuizProblems（章末小テストの出題選定）
+      grading.ts                    # answer文字列の正規化・正誤判定
+      types.ts                      # Chapter/Problem/ExplanationDiagram/ProblemFigureなど共有型
+      constants.ts                  # ACTIVE_STUDENT_COOKIE
     components/
-      ExplanationPanel.tsx
-      ProblemCard.tsx
-      AnswerInput.tsx
-      StepSolution.tsx
-      HintButton.tsx
-      ProfileSwitcher.tsx
-      ParentProgressChart.tsx
-  .env.local.example                # ANTHROPIC_API_KEY= / NEXT_PUBLIC_SUPABASE_URL= / NEXT_PUBLIC_SUPABASE_ANON_KEY= / SUPABASE_SERVICE_ROLE_KEY=
+      ExplanationPanel.tsx / ExplanationDiagram.tsx
+      ProblemView.tsx / QuizProblemView.tsx / QuizReview.tsx
+      StepSolution.tsx / HintButton.tsx / MagnitudeBar.tsx / ProblemFigureView.tsx
+      diagrams/GroupingDiagram.tsx / BarChartDiagram.tsx / TableDiagram.tsx
+  .env.local.example                # NEXT_PUBLIC_SUPABASE_URL= / NEXT_PUBLIC_SUPABASE_ANON_KEY= / SUPABASE_SERVICE_ROLE_KEY= / AI_PROVIDER= / AI_MODEL= / ANTHROPIC_API_KEY=
 ```
 
-## 3. 単元データモデル（`content/chapters/g3-division.ts`）
+## 3. 単元データモデル（`lib/types.ts` + `content/curriculum.ts`）
 
 ```ts
 type Difficulty = "easy" | "normal" | "hard";
 
+// 単元解説に添える図（例: わり算=grouping）。種類は単元追加のたびに増やす
+type ExplanationDiagram = { kind: "grouping"; total: number; groups: number; label?: string };
+
+// 表・棒グラフの読み取り問題に添える図（値が空欄の問題は"ア"などの文字を入れる）
+type ProblemFigure =
+  | { kind: "bar-chart"; unit: string; maxValue: number; yLabels: number[]; bars: { label: string; value: number }[] }
+  | { kind: "table"; columns: string[]; rows: { label: string; cells: (string | number)[] }[] };
+
 interface Problem {
   id: string;
   difficulty: Difficulty;
-  question: string;        // 例: "12 ÷ 3 = ？"
-  answer: string;           // 正解（あまりありは "4あまり2" のような形式も許容）
+  question: string;
+  answer: string;           // 正解（あまりは "4あまり2"、分数は "1/3" のような文字列表現も許容）
   steps: string[];          // 途中式・考え方を順に表示
-  tags: string[];           // 苦手分析用（例: "あまりの扱い", "文章題"）
+  tags: string[];           // 苦手分析・確認問題選定用（例: "あまりの扱い", "文章題"）
+  figure?: ProblemFigure;   // 表・棒グラフが必要な問題にのみ付与
 }
 
 interface Chapter {
-  id: string;               // "g3-division"
-  grade: string;            // "小学3年"
-  title: string;            // "わり算"
+  id: string;               // 例: "g3-division"
+  grade: string;            // 例: "小学3年"
+  title: string;            // 例: "わり算"
   explanation: {
-    summary: string;        // 文科省の指導要領に沿った解説文（Markdown）
-    keyPoints: string[];    // 要点まとめ
+    summary: string;
+    keyPoints: string[];
+    diagram?: ExplanationDiagram;
+    notebookExample?: { question: string; lines: string[] };  // ノートの書き方の実例
   };
-  problems: Problem[];      // easy 3問 / normal 3問 / hard 3問 程度
+  practiceProblems: Problem[];    // 解説付き練習（3〜4問、代表パターンを1問ずつ）
+  assessmentProblems: Problem[];  // 簡単→普通→チャレンジの順
 }
 ```
 
-採点はAIを使わず、`answer`との厳密比較（表記ゆれは正規化して吸収）で行う。AIは「ヒント」と「個別再解説」にのみ使う。
+`content/curriculum.ts`が全学年・全単元を集約するレジストリ：`chapters: Chapter[]`、`GRADE_ORDER`（小学1〜6年・中学1〜3年）、`getChapter(chapterId)` / `getChaptersByGrade(grade)` / `getAvailableGrades()`（実データのある学年のみGRADE_ORDER順に返す）。各`content/chapters/g3-*.ts`はそのファイル冒頭のコメントに出典（宮城県教育センター／すたぺんドリル等）を明記する。
+
+採点はAIを使わず、`answer`との厳密比較（`lib/grading.ts`で表記ゆれ・全角数字などを正規化して吸収）で行う。AIは「ヒント」と「個別再解説」にのみ使う。
 
 ## 4. 学習フロー（画面遷移）
 
@@ -147,30 +171,33 @@ interface Chapter {
         ▼
 [プロファイル選択]（子どもプロファイルを作成 or 選択）
         ▼
-[ダッシュボード]
-   └ 単元カード「小3・わり算」をクリック
+[学年選択]（getAvailableGrades()を一覧表示。子どもの学年をハイライト、データが無い学年は「準備中」）
         ▼
-[学習画面]
-  1. 解説パネル表示（要点＋具体例）
+[単元一覧]（その学年の単元カード＋進捗バー）
+   └ 単元カードをクリック
         ▼
-  2. 問題表示（easy→normal→hardの順、1問ずつ）
-     - 画面には問題文のみ。生徒はノートで計算
-     - 回答入力欄に数値/文字列を入力して送信
+[学習画面（ChapterView）]
+  1. 解説パネル（要点＋具体例＋必要に応じて図・ノートの書き方の例）
         ▼
-  3. 採点結果表示
-     - 正誤に関わらず「途中式」をステップごとに開示
-     - 生徒がノートの計算と照らし合わせる
-     - ボタン：「わかった／次へ」「よく分からない」
-        ▼ (よく分からない を押した場合)
-  4. AI個別再解説（Claude API）
-     - 元の解説とは異なる切り口（図解的比喩・日常例）で再生成
-     - 再解説後、同じ問題か類題をもう一度提示
+  2. 練習問題（解説付き、3〜4問）
+     - 画面には問題文（＋表/グラフがあれば図）のみ。生徒はノートで計算
+     - 回答送信 → 正誤に関わらず「途中式」を都度開示
+     - ボタン：「わかった／次へ」「よく分からない」（→AI個別再解説、後述）
         ▼
-  （全問題終了）→ ダッシュボードに戻り、達成率を更新
+  3. 簡単→普通→チャレンジ問題（同じく回答ごとに途中式を都度開示。フロー自体は2と同じ、練習との違いは
+     「解説」枠の外に出て自力で解く位置づけという点のみ）
+        ▼
+  4. 章末小テスト（5問、`pickQuizProblems`で難易度バランスよく出題）
+     - 都度の正誤・途中式・ヒント・AI再解説は出さない（テスト形式）
+        ▼
+  5. 小テスト結果画面（quiz-review）
+     - 5問分の自分の回答・正誤を一覧表示、不正解のみ途中式を開示
+     - スコアと合格ライン（80%）バッジを表示
+     - 「学習マップに戻る」→ 学年選択画面へ（chapter_progress.completed_atはこの時点で更新済み）
 ```
 
-各問題画面には常時「ヒント」ボタンを表示。押すたびに段階的にヒントが強くなる：
-1回目＝着眼点、2回目＝使う公式、3回目＝最初の1ステップ。ヒントもClaude APIで生成するが、公式解答は絶対に含めないようプロンプトで制約する。
+各問題画面（練習・簡単/普通/チャレンジ）には常時「ヒント」ボタンを表示。押すたびに段階的にヒントが強くなる：
+1回目＝着眼点、2回目＝使う公式、3回目＝最初の1ステップ。ヒントもClaude APIで生成するが、公式解答は絶対に含めないようプロンプトで制約する。章末小テストのみ、テスト形式を保つためヒント・AI再解説は提供しない。
 
 ## 5. AI呼び出し設計
 
@@ -208,11 +235,28 @@ Response: { explanation: string }
 このアプリには2種類のAI関連コンテンツがあり、対策が異なる。
 
 **(A) 教材データ（問題文・正解・途中式）は、AIに生成させず実在の教材から採用する。**
-`src/content/chapters/g3-division.ts` の問題（16問）は、以下の実在教材の設問・解答をもとに作成している（出典はファイル冒頭にコメントで明記）。文部科学省の学習指導要領（除数・商が1位数の除法、あまりの理解）とも整合を確認済み。
-- 宮城県教育センターの公開教材（小学3年 算数 単元3「わり算」・単元7「あまりのあるわり算」、実際の問題と解答）
-- すたぺんドリル（startoo.co）小3算数「わり算」「あまりのあるわり算」。**同サイトの利用規約は「本サービスを商業的に利用する行為」を禁止行為として明記しているため、現状は個人利用の範囲でのみ採用している。本アプリを配布・商用化する場合は、この出典分を差し替えるか、サイト運営元に別途許諾を得る必要がある。**
+小学3年生の全12単元（実質13単元分、下表）は、以下の2つの実在教材の設問・解答をもとに作成している（各ファイル冒頭のコメントに出典を明記）。文部科学省の学習指導要領とも整合を確認済み。
+- **宮城県教育センター**「わくわくワーク」小学3年算数（`00.els3.kaitou.all.pdf`、全73ページ、教員向け解答付き）。ほぼ全単元をカバーしており主要な出典。
+- **すたぺんドリル**（startoo.co）小3算数。分量が必要な単元の補完・裏取りに使用。**同サイトの利用規約は「本サービスを商業的に利用する行為」を禁止行為として明記しているため、現状は個人利用の範囲でのみ採用している。本アプリを配布・商用化する場合は、該当箇所を差し替えるか、サイト運営元に別途許諾を得る必要がある。**
 
-今後、他学年・他単元を追加する際も、AIに問題を自由生成させるのではなく、教科書・教育委員会等が公開する実在の問題を出典付きで採用する方針とする。ただし出典が商用利用不可のサイトの場合は、上記と同様に注記し、配布前に見直す。
+| ファイル | 単元 | 問題数 |
+|---|---|---|
+| `g3-division.ts` | わり算 | 16 |
+| `g3-multiplication-written.ts` | かけ算の筆算 | 16 |
+| `g3-time.ts` | 時こくと時間のもとめ方 | 16 |
+| `g3-addition-subtraction-written.ts` | たし算とひき算の筆算 | 18 |
+| `g3-large-numbers.ts` | 大きい数 | 19 |
+| `g3-length-weight.ts` | 長さと重さ | 18 |
+| `g3-circle-sphere.ts` | 円と球 | 14 |
+| `g3-decimals.ts` | 小数 | 18 |
+| `g3-fractions.ts` | 分数 | 14 |
+| `g3-expressions-with-box.ts` | □を使った式 | 18 |
+| `g3-bar-graphs.ts` | 棒グラフと表 | 15 |
+| `g3-triangles.ts` | 二等辺三角形・正三角形 | 15 |
+
+「倍の計算（何倍でしょうか）」は独立単元としては教科書に存在せず、わり算の文章題（タグ「文章題」）の一部として扱っている。
+
+今後、4年・5年生の単元を追加する際も、AIに問題を自由生成させるのではなく、教科書・教育委員会等が公開する実在の問題を出典付きで採用する方針とする。ただし出典が商用利用不可のサイトの場合は、上記と同様に注記し、配布前に見直す。
 
 **(B) 実行時にAIが動的生成するのは「ヒント」と「個別再解説」のみで、これらは常に検証済みデータ（`problem.answer` / `problem.steps`）を根拠として渡し、AI自身に計算をやり直させない。**
 - `generateHint`（`src/lib/ai/tutor.ts`）: プロンプトに正解と想定手順を明示した上で「これを言い換えるだけ」と指示し、生成後に`leaksAnswer()`で正解の数値が本文に混入していないか機械的にチェックする。混入していた場合、またはAPI呼び出しが失敗した場合は、あらかじめ用意した安全な定型ヒントに差し替える。
@@ -228,7 +272,23 @@ Response: { explanation: string }
 - 選定は完全にコード側のロジックで行い、AIには問題文を作らせない（対策Aと同じ理由）。
 - 該当タグの別問題が存在しない場合（例：`複合問題`タグは現状1問のみ）は確認問題を挟まず、そのまま次の問題に進む。
 - `ChapterView`は確認問題を通常の問題キューには含めず、一時的に割り込ませてから元の続きに戻る（`pendingNextPhaseRef`で退避）。確認問題の回答も通常どおり`attempts`テーブルに記録される。
-- 現状、単元内の問題数は16問（宮城県教育センター9問＋すたぺんドリル7問）で、タグごとに3〜7問程度。今後さらに他の出典（都度、出典と利用条件を明記の上で採用）を追加できれば、確認問題の種類をさらに増やせる。神奈川県の教材ページ（https://www.pref.kanagawa.jp/docs/v3p/gakushushien/kadaikaiketsu/shou3sansu.html）を確認したが、わり算・あまりのあるわり算は含まれていなかった（分数・かけ算等の別単元のみ）。
+- 各単元とも14〜19問（practiceProblems＋assessmentProblems合計）を用意しており、タグごとに複数の類題があるため、ほとんどのケースで確認問題を挟める。
+
+## 5.7 章末小テストの出題（`lib/quiz.ts`）
+
+各単元の最後に5問の小テストを行う（4章「学習フロー」参照）。出題も確認問題と同じ考え方で、新規問題はAIに作らせず、その単元の`practiceProblems + assessmentProblems`全体から選ぶ。
+
+- `pickQuizProblems(chapter, count = 5)`は、easy/normal/hardの順（既定パターン`["easy","normal","hard","easy","normal"]`）で各難易度から1問ずつ、決定的に選ぶ純関数。該当難易度に問題が無い／使い切った場合は他の難易度から補充する。
+- 小テストの回答は`attempts`テーブルに`is_quiz = true`で記録し（`0002_add_is_quiz.sql`）、ダッシュボード・保護者ページの進捗集計（`fetchAttempts`結果を`!a.is_quiz`でフィルタ）からは除外している。小テストの成績を通常演習の進捗率に混ぜないため。
+- 合格ラインは正答率80%（`QuizReview`コンポーネントの`PASS_RATIO`）。将来、複数章をまたぐ「小テストで理解が浅い章へ自動的に戻す」機能を作る際の土台になる。
+
+## 5.8 表・棒グラフを使う問題（`ProblemFigure`）
+
+「棒グラフと表」単元は内容そのものが図の読み取りが本質のため、`Problem.figure`に`table`または`bar-chart`を持たせ、`ProblemView`・`QuizProblemView`・`QuizReview`のどれでも問題文の下に図を描画する（`components/diagrams/TableDiagram.tsx` / `BarChartDiagram.tsx`）。
+
+- 棒グラフはあえて棒の上に数値ラベルを付けない（目盛りを読んで数量を答えさせるのがこの単元の目的のため。通常のダッシュボード可視化とは異なる意図的な例外）。
+- 表は空らんのセルに「ア」「？」などの文字をそのまま入れて、実データの表を忠実に再現する。
+- 単元解説に添える図（`ExplanationDiagram`、わり算の`grouping`図など）とは別の仕組みで、問題ごとに個別の図が必要な場合に使う。今後、円と球や三角形など図形単元でも同様の仕組みで図を追加できる。
 
 ## 6. 学習履歴の記録（Supabase）
 
@@ -245,10 +305,11 @@ Response: { explanation: string }
 
 ## 8. 今回のスコープ外（メモ）
 
-- 複数章をまたぐ小テスト・復習ロック機構
+- 複数章をまたぐ小テスト成績に基づく復習ロック機構（章末小テスト自体は実装済み。これを学年をまたいで集計し、苦手章へ自動的に差し戻す機能は未実装）
 - 子ども自身の個別ログイン（招待コード方式への拡張）
 - 応用問題（受験問題）データの選定・組み込み
-- 他学年・他単元への展開
+- 4年生・5年生以降の単元（学年選択の導線とレジストリ構造は用意済みなので、`content/chapters/g4-*.ts`等を追加し`curriculum.ts`に登録するだけで拡張できる）
+- 保護者ダッシュボードでの章末小テストのスコア表示（現状、小テスト結果は`is_quiz=true`でDBには記録されているが、保護者向けの表示はまだ無い）
 
 ## 9. 事前に必要な準備（ユーザー側作業）
 

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { chapters } from "@/content/chapters/g3-division";
+import { chapters } from "@/content/curriculum";
+import { allProblems } from "@/lib/types";
 import {
   fetchAttempts,
   fetchChapterProgress,
@@ -30,7 +31,9 @@ export default async function ParentStudentPage({
 
   const chapterReports = await Promise.all(
     chapters.map(async (chapter) => {
-      const attempts = await fetchAttempts(supabase, studentId, chapter.id);
+      const attempts = (await fetchAttempts(supabase, studentId, chapter.id)).filter(
+        (a) => !a.is_quiz,
+      );
       const latest = latestAttemptPerProblem(attempts);
       const solvedCount = [...latest.values()].filter((a) => a.correct).length;
       const progress = await fetchChapterProgress(supabase, studentId, chapter.id);
@@ -43,7 +46,7 @@ export default async function ParentStudentPage({
       return {
         chapter,
         solvedCount,
-        totalCount: chapter.problems.length,
+        totalCount: allProblems(chapter).length,
         completed: Boolean(progress?.completed_at),
         attemptCount: attempts.length,
         totalDurationMinutes: Math.round(totalDurationMs / 60000),

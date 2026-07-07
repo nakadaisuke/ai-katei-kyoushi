@@ -32,6 +32,7 @@ export interface Database {
           used_hint_levels: number;
           requested_reexplain: boolean;
           duration_ms: number | null;
+          is_quiz: boolean;
           created_at: string;
         };
         Insert: {
@@ -44,6 +45,7 @@ export interface Database {
           used_hint_levels?: number;
           requested_reexplain?: boolean;
           duration_ms?: number | null;
+          is_quiz?: boolean;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["attempts"]["Insert"]>;
@@ -54,11 +56,13 @@ export interface Database {
           student_id: string;
           chapter_id: string;
           completed_at: string | null;
+          current_index: number | null;
         };
         Insert: {
           student_id: string;
           chapter_id: string;
           completed_at?: string | null;
+          current_index?: number | null;
         };
         Update: Partial<
           Database["public"]["Tables"]["chapter_progress"]["Insert"]

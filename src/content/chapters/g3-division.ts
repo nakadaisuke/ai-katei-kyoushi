@@ -28,8 +28,24 @@ export const g3Division: Chapter = {
       "たしかめざん：わる数 × 商 ＋ あまり ＝ わられる数",
       "文章題では「何を、何人（何グループ）で分けるのか」を読み取ることが大切",
     ],
+    diagram: {
+      kind: "grouping",
+      total: 12,
+      groups: 3,
+      label: "12個のあめを3人で同じ数ずつ分けると、1人4個",
+    },
+    notebookExample: {
+      question: "例：9 ÷ 2 = ？（あまりも答えよう）",
+      lines: [
+        "2のだんの九九：2×4=8, 2×5=10",
+        "9をこえない一番大きい数は 2×4=8 → 商は 4",
+        "9 - 8 = 1 → あまりは 1",
+        "9 ÷ 2 = 4 あまり 1",
+        "たしかめ：2 × 4 + 1 = 9 ○",
+      ],
+    },
   },
-  problems: [
+  practiceProblems: [
     {
       id: "g3-division-easy-1",
       difficulty: "easy",
@@ -38,17 +54,6 @@ export const g3Division: Chapter = {
       steps: [
         "3のだんの九九を使って、3×何が27になるかを考える",
         "3 × 9 = 27 なので、27 ÷ 3 = 9",
-      ],
-      tags: ["あまりのないわり算"],
-    },
-    {
-      id: "g3-division-easy-2",
-      difficulty: "easy",
-      question: "20 ÷ 5 = ？",
-      answer: "4",
-      steps: [
-        "5のだんの九九を使って、5×何が20になるかを考える",
-        "5 × 4 = 20 なので、20 ÷ 5 = 4",
       ],
       tags: ["あまりのないわり算"],
     },
@@ -65,6 +70,47 @@ export const g3Division: Chapter = {
         "4列になる",
       ],
       tags: ["あまりのないわり算", "文章題"],
+    },
+    {
+      id: "g3-division-normal-1",
+      difficulty: "normal",
+      question: "9 ÷ 2 = ？（あまりも答えよう）",
+      answer: "4あまり1",
+      steps: [
+        "2のだんの九九で9をこえない一番大きい数を探す：2×4=8, 2×5=10",
+        "2×4=8 が9をこえない一番大きい数なので、商は4",
+        "9 - 8 = 1 が、あまり",
+        "たしかめ：2 × 4 + 1 = 9（あまりの1は、わる数の2より小さいので正しい）",
+      ],
+      tags: ["あまりのあるわり算"],
+    },
+    {
+      id: "g3-division-normal-3",
+      difficulty: "normal",
+      question:
+        "27まいのカードを、4人で同じ数ずつ分けると、1人分は何まいになって、何まいあまりますか。",
+      answer: "6あまり3",
+      steps: [
+        "「同じ数ずつ分ける」なので、わり算 27 ÷ 4 を考える",
+        "4のだんの九九で27をこえない一番大きい数を探す：4×6=24, 4×7=28",
+        "4×6=24 が27をこえない一番大きい数なので、商は6",
+        "27 - 24 = 3 が、あまり",
+        "1人分6まいで、3まいあまる",
+      ],
+      tags: ["あまりのあるわり算", "文章題"],
+    },
+  ],
+  assessmentProblems: [
+    {
+      id: "g3-division-easy-2",
+      difficulty: "easy",
+      question: "20 ÷ 5 = ？",
+      answer: "4",
+      steps: [
+        "5のだんの九九を使って、5×何が20になるかを考える",
+        "5 × 4 = 20 なので、20 ÷ 5 = 4",
+      ],
+      tags: ["あまりのないわり算"],
     },
     {
       id: "g3-division-easy-4",
@@ -92,19 +138,6 @@ export const g3Division: Chapter = {
       tags: ["あまりのないわり算", "文章題"],
     },
     {
-      id: "g3-division-normal-1",
-      difficulty: "normal",
-      question: "9 ÷ 2 = ？（あまりも答えよう）",
-      answer: "4あまり1",
-      steps: [
-        "2のだんの九九で9をこえない一番大きい数を探す：2×4=8, 2×5=10",
-        "2×4=8 が9をこえない一番大きい数なので、商は4",
-        "9 - 8 = 1 が、あまり",
-        "たしかめ：2 × 4 + 1 = 9（あまりの1は、わる数の2より小さいので正しい）",
-      ],
-      tags: ["あまりのあるわり算"],
-    },
-    {
       id: "g3-division-normal-2",
       difficulty: "normal",
       question: "30 ÷ 4 = ？（あまりも答えよう）",
@@ -116,21 +149,6 @@ export const g3Division: Chapter = {
         "たしかめ：4 × 7 + 2 = 30（あまりの2は、わる数の4より小さいので正しい）",
       ],
       tags: ["あまりのあるわり算"],
-    },
-    {
-      id: "g3-division-normal-3",
-      difficulty: "normal",
-      question:
-        "27まいのカードを、4人で同じ数ずつ分けると、1人分は何まいになって、何まいあまりますか。",
-      answer: "6あまり3",
-      steps: [
-        "「同じ数ずつ分ける」なので、わり算 27 ÷ 4 を考える",
-        "4のだんの九九で27をこえない一番大きい数を探す：4×6=24, 4×7=28",
-        "4×6=24 が27をこえない一番大きい数なので、商は6",
-        "27 - 24 = 3 が、あまり",
-        "1人分6まいで、3まいあまる",
-      ],
-      tags: ["あまりのあるわり算", "文章題"],
     },
     {
       id: "g3-division-normal-4",
@@ -251,9 +269,3 @@ export const g3Division: Chapter = {
     },
   ],
 };
-
-export const chapters = [g3Division];
-
-export function getChapter(chapterId: string) {
-  return chapters.find((c) => c.id === chapterId);
-}

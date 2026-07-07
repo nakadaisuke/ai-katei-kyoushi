@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-import { getChapter } from "@/content/chapters/g3-division";
+import { getChapter } from "@/content/curriculum";
+import { allProblems } from "@/lib/types";
 import { generateHint } from "@/lib/ai/tutor";
 
 export async function POST(request: Request) {
@@ -21,7 +22,7 @@ export async function POST(request: Request) {
   };
 
   const chapter = getChapter(chapterId);
-  const problem = chapter?.problems.find((p) => p.id === problemId);
+  const problem = chapter && allProblems(chapter).find((p) => p.id === problemId);
 
   if (!problem) {
     return NextResponse.json({ error: "問題が見つかりません。" }, { status: 404 });

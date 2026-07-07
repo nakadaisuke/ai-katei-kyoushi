@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Problem } from "@/lib/types";
 import { StepSolution } from "@/components/StepSolution";
 import { HintButton } from "@/components/HintButton";
+import { ProblemFigureView } from "@/components/ProblemFigureView";
 
 const DIFFICULTY_LABEL: Record<Problem["difficulty"], string> = {
   easy: "かんたん",
@@ -54,6 +55,12 @@ export function ProblemView({
       </div>
 
       <p className="text-lg font-medium">{problem.question}</p>
+
+      {problem.figure && (
+        <div className="flex justify-center rounded bg-[#f9f9f7] p-4 dark:bg-[#0d0d0d]">
+          <ProblemFigureView figure={problem.figure} />
+        </div>
+      )}
 
       {!result && (
         <>
