@@ -238,21 +238,22 @@ Response: { explanation: string }
 小学3年生の全12単元（実質13単元分、下表）は、以下の2つの実在教材の設問・解答をもとに作成している（各ファイル冒頭のコメントに出典を明記）。文部科学省の学習指導要領とも整合を確認済み。
 - **宮城県教育センター**「わくわくワーク」小学3年算数（`00.els3.kaitou.all.pdf`、全73ページ、教員向け解答付き）。ほぼ全単元をカバーしており主要な出典。
 - **すたぺんドリル**（startoo.co）小3算数。分量が必要な単元の補完・裏取りに使用。**同サイトの利用規約は「本サービスを商業的に利用する行為」を禁止行為として明記しているため、現状は個人利用の範囲でのみ採用している。本アプリを配布・商用化する場合は、該当箇所を差し替えるか、サイト運営元に別途許諾を得る必要がある。**
+- **埼玉県「学力向上ワークシート」算数**（pref.saitama.lg.jp）・**大阪府「小学校算数・ワークブック」**（pref.osaka.lg.jp）小3算数。問題数を各単元20〜30問程度まで拡充する際に追加採用。**いずれも著作権ページに教育目的の一律利用許可の記載はなく、標準の著作権が適用されるため、すたぺんドリルと同じ「個人利用の範囲で使用し、商用化・配布前に見直す」caveatを踏襲する。**
 
 | ファイル | 単元 | 問題数 |
 |---|---|---|
-| `g3-division.ts` | わり算 | 16 |
-| `g3-multiplication-written.ts` | かけ算の筆算 | 16 |
-| `g3-time.ts` | 時こくと時間のもとめ方 | 16 |
-| `g3-addition-subtraction-written.ts` | たし算とひき算の筆算 | 18 |
-| `g3-large-numbers.ts` | 大きい数 | 19 |
-| `g3-length-weight.ts` | 長さと重さ | 18 |
-| `g3-circle-sphere.ts` | 円と球 | 14 |
-| `g3-decimals.ts` | 小数 | 18 |
-| `g3-fractions.ts` | 分数 | 14 |
-| `g3-expressions-with-box.ts` | □を使った式 | 18 |
-| `g3-bar-graphs.ts` | 棒グラフと表 | 15 |
-| `g3-triangles.ts` | 二等辺三角形・正三角形 | 15 |
+| `g3-division.ts` | わり算 | 27 |
+| `g3-multiplication-written.ts` | かけ算の筆算 | 27 |
+| `g3-time.ts` | 時こくと時間のもとめ方 | 27 |
+| `g3-addition-subtraction-written.ts` | たし算とひき算の筆算 | 29 |
+| `g3-large-numbers.ts` | 大きい数 | 29 |
+| `g3-length-weight.ts` | 長さと重さ | 29 |
+| `g3-circle-sphere.ts` | 円と球 | 24 |
+| `g3-decimals.ts` | 小数 | 29 |
+| `g3-fractions.ts` | 分数 | 25 |
+| `g3-expressions-with-box.ts` | □を使った式 | 26 |
+| `g3-bar-graphs.ts` | 棒グラフと表 | 24 |
+| `g3-triangles.ts` | 二等辺三角形・正三角形 | 26 |
 
 「倍の計算（何倍でしょうか）」は独立単元としては教科書に存在せず、わり算の文章題（タグ「文章題」）の一部として扱っている。
 
@@ -290,6 +291,17 @@ Response: { explanation: string }
 - 表は空らんのセルに「ア」「？」などの文字をそのまま入れて、実データの表を忠実に再現する。
 - 単元解説に添える図（`ExplanationDiagram`、わり算の`grouping`図など）とは別の仕組みで、問題ごとに個別の図が必要な場合に使う。今後、円と球や三角形など図形単元でも同様の仕組みで図を追加できる。
 
+## 5.9 マイルストーンテスト・卒業テスト・合格お祝い演出（`lib/milestones.ts`）
+
+単元末小テストの上位に、複数単元をまたぐ「確認テスト（マイルストーンテスト）」と、全単元から出題する「卒業テスト」を追加した。
+
+- `getMilestonesForGrade(grade)`：`getChaptersByGrade(grade)`を`MILESTONE_SIZE=4`単元ごとに区切り、各グループを1つの`MultiChapterTest`とする（小3・全12単元なら3回）。`getGraduationTest(grade)`はその学年の全単元をまとめた1件を返す。IDは学年の最初の章ID接頭辞（例："g3-division" → "g3"）から自動導出するため、4年・5年を追加しても変更不要。
+- 出題は`pickMultiChapterTestProblems(chapters)` = 各章に対して既存の`pickQuizProblems(chapter, PROBLEMS_PER_CHAPTER=2)`を呼んで結合するだけ（`quiz.ts`は無改修）。新しい問題プールや選定ロジックは作らず、既存のハルシネーション対策をそのまま踏襲。
+- **DBスキーマの追加なし**：`chapter_progress`/`attempts`の`chapter_id`は単なる`text`のため、マイルストーン・卒業テストのIDをそのまま`chapter_id`として使い、既存の`recordAttempt`・`markChapterComplete`・`fetchAllChapterProgress`・RLSポリシーをそのまま再利用している（`is_quiz: true`で記録するため、単元別の演習進捗集計は汚染されない）。
+- `MultiChapterTestView`（`components/MultiChapterTestView.tsx`）が`/milestone/[testId]`・`/graduation`の実体。前提単元の完了チェック（ロック）は**あえて設けていない**（ユーザー指示）——単元一覧ページに常にリンクとして表示され、いつでも受験できる。
+- 単元一覧ページ（`app/grade/[grade]/page.tsx`）は4単元ごと・末尾に確認テスト／卒業テストのカードを差し込む。新規Supabaseクエリは追加していない（既存の`fetchAllChapterProgress`が合成IDの行もそのまま返すため）。
+- **合格お祝い演出**：`QuizReview`が正答率80%（既存の`PASS_RATIO`）以上で`Celebration`コンポーネント（`components/Celebration.tsx`）を表示する。絵文字の紙吹雪をCSSキーフレーム（`globals.css`の`confetti-fall`）で降らせ、「おめでとう！🎉」の吹き出しを出す（外部ライブラリ不使用）。卒業テストのみ紙吹雪の数を増やし、「そつぎょう おめでとう！🏆」という専用メッセージにしている。既存の単元末小テスト（`ChapterView`からの`<QuizReview results={...} />`呼び出し）も無改修のまま同じ演出を受け取る（新規propsは全てオプショナル）。
+
 ## 6. 学習履歴の記録（Supabase）
 
 1章の`attempts`/`chapter_progress`テーブルに、生徒が1問回答するたびに1行INSERTする（`lib/progress.ts`が`recordAttempt()`としてラップ）。書き込みは選択中の子どもプロファイル（`student_id`）に紐づける。RLSにより、その保護者アカウント配下のプロファイル以外へは書き込めない。
@@ -305,11 +317,11 @@ Response: { explanation: string }
 
 ## 8. 今回のスコープ外（メモ）
 
-- 複数章をまたぐ小テスト成績に基づく復習ロック機構（章末小テスト自体は実装済み。これを学年をまたいで集計し、苦手章へ自動的に差し戻す機能は未実装）
+- マイルストーンテスト・卒業テストの成績に基づく「苦手章へ自動的に差し戻す」復習ロック機構（テスト自体は5.9節で実装済み。前提単元の完了チェックも意図的に設けていない＝ロックなし。成績を見て弱点章に誘導する機能は未実装）
 - 子ども自身の個別ログイン（招待コード方式への拡張）
 - 応用問題（受験問題）データの選定・組み込み
-- 4年生・5年生以降の単元（学年選択の導線とレジストリ構造は用意済みなので、`content/chapters/g4-*.ts`等を追加し`curriculum.ts`に登録するだけで拡張できる）
-- 保護者ダッシュボードでの章末小テストのスコア表示（現状、小テスト結果は`is_quiz=true`でDBには記録されているが、保護者向けの表示はまだ無い）
+- 4年生・5年生以降の単元（学年選択の導線とレジストリ構造は用意済みなので、`content/chapters/g4-*.ts`等を追加し`curriculum.ts`に登録するだけで拡張できる。マイルストーン・卒業テストも学年ごとに自動生成されるため追加対応不要）
+- 保護者ダッシュボードでの章末小テスト・マイルストーン／卒業テストのスコア表示（現状、結果は`is_quiz=true`でDBには記録されているが、保護者向けの表示はまだ無い）
 
 ## 9. 事前に必要な準備（ユーザー側作業）
 

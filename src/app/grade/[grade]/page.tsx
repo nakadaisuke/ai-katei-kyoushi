@@ -10,6 +10,7 @@ import {
   fetchAllChapterProgress,
   latestAttemptPerProblem,
 } from "@/lib/progress";
+import { MILESTONE_SIZE, getMilestonesForGrade, getGraduationTest } from "@/lib/milestones";
 import { MagnitudeBar } from "@/components/MagnitudeBar";
 
 export default async function GradeUnitsPage({
@@ -62,6 +63,39 @@ export default async function GradeUnitsPage({
     };
   });
 
+  // 4単元ごとに確認テスト（マイルストーンテスト）、最後に卒業テストのカードを差し込む。
+  // ロックはかけず、いつでも受験できる（済みバッジの表示のみ進捗と連動させる）。
+  const milestones = getMilestonesForGrade(grade);
+  const graduation = getGraduationTest(grade);
+
+  type Row =
+    | { type: "chapter"; key: string; chapter: (typeof chapterCards)[number]["chapter"]; solvedCount: number; totalCount: number; completed: boolean }
+    | { type: "test"; key: string; title: string; href: string; completed: boolean };
+
+  const rows: Row[] = [];
+  chapterCards.forEach((cc, i) => {
+    rows.push({ type: "chapter", key: cc.chapter.id, ...cc });
+    if ((i + 1) % MILESTONE_SIZE === 0) {
+      const milestone = milestones[(i + 1) / MILESTONE_SIZE - 1];
+      if (milestone) {
+        rows.push({
+          type: "test",
+          key: milestone.id,
+          title: milestone.title,
+          href: `/milestone/${milestone.id}`,
+          completed: Boolean(progressByChapter.get(milestone.id)?.completed_at),
+        });
+      }
+    }
+  });
+  rows.push({
+    type: "test",
+    key: graduation.id,
+    title: graduation.title,
+    href: "/graduation",
+    completed: Boolean(progressByChapter.get(graduation.id)?.completed_at),
+  });
+
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-6 px-4 py-12">
       <div className="flex items-center justify-between">
@@ -79,26 +113,40 @@ export default async function GradeUnitsPage({
       </div>
 
       <ul className="flex flex-col gap-3">
-        {chapterCards.map(({ chapter, solvedCount, totalCount, completed }) => (
-          <li key={chapter.id}>
-            <Link
-              href={`/chapter/${chapter.id}`}
-              className="flex flex-col gap-1 rounded border p-4 hover:bg-gray-50"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">{chapter.title}</span>
-                {completed && (
+        {rows.map((row) =>
+          row.type === "chapter" ? (
+            <li key={row.key}>
+              <Link
+                href={`/chapter/${row.chapter.id}`}
+                className="flex flex-col gap-1 rounded border p-4 hover:bg-gray-50"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold">{row.chapter.title}</span>
+                  {row.completed && (
+                    <span className="text-xs font-medium text-green-600">達成済み</span>
+                  )}
+                </div>
+                <MagnitudeBar
+                  label="進捗"
+                  valueLabel={`${row.solvedCount} / ${row.totalCount} 問 正解`}
+                  ratio={row.solvedCount / row.totalCount}
+                />
+              </Link>
+            </li>
+          ) : (
+            <li key={row.key}>
+              <Link
+                href={row.href}
+                className="flex items-center justify-between rounded border-2 border-dashed border-amber-400 bg-amber-50 p-4 hover:bg-amber-100 dark:bg-[#2a2410] dark:hover:bg-[#332c14]"
+              >
+                <span className="font-semibold">📝 {row.title}</span>
+                {row.completed && (
                   <span className="text-xs font-medium text-green-600">達成済み</span>
                 )}
-              </div>
-              <MagnitudeBar
-                label="進捗"
-                valueLabel={`${solvedCount} / ${totalCount} 問 正解`}
-                ratio={solvedCount / totalCount}
-              />
-            </Link>
-          </li>
-        ))}
+              </Link>
+            </li>
+          ),
+        )}
       </ul>
     </main>
   );
