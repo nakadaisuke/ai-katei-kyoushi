@@ -84,6 +84,11 @@ export function ChapterView({
     saveResumeIndex(supabaseRef.current, studentId, chapter.id, idx).catch(() => {});
   }
 
+  function handleBack() {
+    if (reviewProblem || typeof phase !== "number" || phase <= 0) return;
+    startProblem(phase - 1);
+  }
+
   function startReview(problem: Problem) {
     seenProblemIdsRef.current.add(problem.id);
     setReviewProblem(problem);
@@ -260,6 +265,8 @@ export function ChapterView({
       ? `練習問題 ${(phase as number) + 1} / ${practiceCount}`
       : `問題 ${(phase as number) - practiceCount + 1} / ${chapter.assessmentProblems.length}`;
 
+  const canGoBack = !reviewProblem && !result && typeof phase === "number" && phase > 0;
+
   return (
     <ProblemView
       problem={activeProblem}
@@ -273,6 +280,7 @@ export function ChapterView({
       onRequestHint={handleRequestHint}
       onRequestReexplain={handleRequestReexplain}
       onNext={handleNext}
+      onBack={canGoBack ? handleBack : undefined}
     />
   );
 }

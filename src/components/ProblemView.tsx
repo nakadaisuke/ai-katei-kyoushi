@@ -24,6 +24,7 @@ export function ProblemView({
   onRequestHint,
   onRequestReexplain,
   onNext,
+  onBack,
 }: {
   problem: Problem;
   headerLabel: string;
@@ -36,6 +37,7 @@ export function ProblemView({
   onRequestHint: (hintLevel: 1 | 2 | 3) => Promise<string>;
   onRequestReexplain: () => void;
   onNext: () => void;
+  onBack?: () => void;
 }) {
   const [draft, setDraft] = useState("");
 
@@ -45,6 +47,16 @@ export function ProblemView({
         <p className="rounded bg-[#cde2fb] px-3 py-2 text-sm text-[#0b0b0b] dark:bg-[#184f95] dark:text-white">
           確認問題：さっきと似たタイプの問題です。もう一度解いてみましょう。
         </p>
+      )}
+
+      {onBack && (
+        <button
+          type="button"
+          onClick={onBack}
+          className="self-start text-sm text-blue-600 underline"
+        >
+          ← 前の問題に戻る
+        </button>
       )}
 
       <div className="flex items-center justify-between text-sm text-gray-500">
