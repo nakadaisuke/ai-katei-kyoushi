@@ -82,6 +82,22 @@ export async function fetchChapterProgress(
   return data;
 }
 
+export type ChapterProgressRow = Database["public"]["Tables"]["chapter_progress"]["Row"];
+
+// 単元一覧画面のように複数章の進捗をまとめて表示する場合、章の数だけ
+// fetchChapterProgressを呼ぶとN+1になるため、生徒1人分をまとめて1回で取得する。
+export async function fetchAllChapterProgress(
+  client: Client,
+  studentId: string,
+): Promise<Map<string, ChapterProgressRow>> {
+  const { data, error } = await client
+    .from("chapter_progress")
+    .select("student_id, chapter_id, completed_at, current_index")
+    .eq("student_id", studentId);
+  if (error) throw error;
+  return new Map((data ?? []).map((row) => [row.chapter_id, row]));
+}
+
 // 単元の途中でリロード・離脱しても、次にキューのどこから再開すべきかを保存する。
 // completed_atとは独立して更新し、小テストまで終わったらmarkChapterCompleteが
 // completed_atを立てる（このindexは以後参照されなくなる）。

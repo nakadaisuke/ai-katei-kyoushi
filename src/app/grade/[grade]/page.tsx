@@ -7,7 +7,7 @@ import { getChaptersByGrade } from "@/content/curriculum";
 import { allProblems } from "@/lib/types";
 import {
   fetchAttempts,
-  fetchChapterProgress,
+  fetchAllChapterProgress,
   latestAttemptPerProblem,
 } from "@/lib/progress";
 import { MagnitudeBar } from "@/components/MagnitudeBar";
@@ -43,23 +43,24 @@ export default async function GradeUnitsPage({
     notFound();
   }
 
-  const chapterCards = await Promise.all(
-    chapters.map(async (chapter) => {
-      const totalProblems = allProblems(chapter);
-      const attempts = (await fetchAttempts(supabase, studentId, chapter.id)).filter(
-        (a) => !a.is_quiz,
-      );
-      const latest = latestAttemptPerProblem(attempts);
-      const solvedCount = [...latest.values()].filter((a) => a.correct).length;
-      const progress = await fetchChapterProgress(supabase, studentId, chapter.id);
-      return {
-        chapter,
-        solvedCount,
-        totalCount: totalProblems.length,
-        completed: Boolean(progress?.completed_at),
-      };
-    }),
-  );
+  // 章ごとに問い合わせるとN+1になるため、この生徒の分をまとめて2回のクエリで取得する
+  const [allAttempts, progressByChapter] = await Promise.all([
+    fetchAttempts(supabase, studentId),
+    fetchAllChapterProgress(supabase, studentId),
+  ]);
+
+  const chapterCards = chapters.map((chapter) => {
+    const attempts = allAttempts.filter((a) => a.chapter_id === chapter.id && !a.is_quiz);
+    const latest = latestAttemptPerProblem(attempts);
+    const solvedCount = [...latest.values()].filter((a) => a.correct).length;
+    const progress = progressByChapter.get(chapter.id);
+    return {
+      chapter,
+      solvedCount,
+      totalCount: allProblems(chapter).length,
+      completed: Boolean(progress?.completed_at),
+    };
+  });
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-6 px-4 py-12">

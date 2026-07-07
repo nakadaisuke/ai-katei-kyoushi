@@ -24,19 +24,22 @@ export const GRADE_ORDER = [
   "中学3年",
 ];
 
+// 宮城県教育センター教材の単元番号（かけ算の筆算(1)→時こく→わり算→たし算ひき算の筆算→
+// 長さ→大きい数のしくみ→円と球→小数→重さ→分数→□を使った式→三角形と角→ぼうグラフと表）
+// に沿った教科書どおりの学習順で並べる。
 export const chapters: Chapter[] = [
-  g3Division,
   g3MultiplicationWritten,
   g3Time,
+  g3Division,
   g3AdditionSubtractionWritten,
-  g3LargeNumbers,
   g3LengthWeight,
+  g3LargeNumbers,
   g3CircleSphere,
   g3Decimals,
   g3Fractions,
   g3ExpressionsWithBox,
-  g3BarGraphs,
   g3Triangles,
+  g3BarGraphs,
 ];
 
 export function getChapter(chapterId: string): Chapter | undefined {

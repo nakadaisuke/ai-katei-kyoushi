@@ -5,7 +5,7 @@ import { chapters } from "@/content/curriculum";
 import { allProblems } from "@/lib/types";
 import {
   fetchAttempts,
-  fetchChapterProgress,
+  fetchAllChapterProgress,
   latestAttemptPerProblem,
   summarizeTagStats,
 } from "@/lib/progress";
@@ -29,32 +29,32 @@ export default async function ParentStudentPage({
     notFound();
   }
 
-  const chapterReports = await Promise.all(
-    chapters.map(async (chapter) => {
-      const attempts = (await fetchAttempts(supabase, studentId, chapter.id)).filter(
-        (a) => !a.is_quiz,
-      );
-      const latest = latestAttemptPerProblem(attempts);
-      const solvedCount = [...latest.values()].filter((a) => a.correct).length;
-      const progress = await fetchChapterProgress(supabase, studentId, chapter.id);
-      const totalDurationMs = attempts.reduce((sum, a) => sum + (a.duration_ms ?? 0), 0);
-      const studyDays = new Set(
-        attempts.map((a) => a.created_at.slice(0, 10)),
-      ).size;
-      const tagStats = summarizeTagStats(attempts, chapter);
+  // 章ごとに問い合わせるとN+1になるため、この生徒の分をまとめて2回のクエリで取得する
+  const [allAttempts, progressByChapter] = await Promise.all([
+    fetchAttempts(supabase, studentId),
+    fetchAllChapterProgress(supabase, studentId),
+  ]);
 
-      return {
-        chapter,
-        solvedCount,
-        totalCount: allProblems(chapter).length,
-        completed: Boolean(progress?.completed_at),
-        attemptCount: attempts.length,
-        totalDurationMinutes: Math.round(totalDurationMs / 60000),
-        studyDays,
-        tagStats,
-      };
-    }),
-  );
+  const chapterReports = chapters.map((chapter) => {
+    const attempts = allAttempts.filter((a) => a.chapter_id === chapter.id && !a.is_quiz);
+    const latest = latestAttemptPerProblem(attempts);
+    const solvedCount = [...latest.values()].filter((a) => a.correct).length;
+    const progress = progressByChapter.get(chapter.id);
+    const totalDurationMs = attempts.reduce((sum, a) => sum + (a.duration_ms ?? 0), 0);
+    const studyDays = new Set(attempts.map((a) => a.created_at.slice(0, 10))).size;
+    const tagStats = summarizeTagStats(attempts, chapter);
+
+    return {
+      chapter,
+      solvedCount,
+      totalCount: allProblems(chapter).length,
+      completed: Boolean(progress?.completed_at),
+      attemptCount: attempts.length,
+      totalDurationMinutes: Math.round(totalDurationMs / 60000),
+      studyDays,
+      tagStats,
+    };
+  });
 
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-md flex-col gap-6 px-4 py-12">
