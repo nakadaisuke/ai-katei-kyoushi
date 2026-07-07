@@ -35,6 +35,13 @@ export const g3Time: Chapter = {
         "答え：午後1時23分",
       ],
     },
+    diagram: {
+      kind: "number-line",
+      min: 0,
+      max: 60,
+      majorStep: 10,
+      minorStep: 5,
+    },
   },
   practiceProblems: [
     {

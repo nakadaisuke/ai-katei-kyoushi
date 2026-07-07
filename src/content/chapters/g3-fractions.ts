@@ -33,6 +33,13 @@ export const g3Fractions: Chapter = {
         "のこりの部分も分数で表せる：3こ分のうち1こ分ぬったら、のこりは 2/3",
       ],
     },
+    diagram: {
+      kind: "number-line",
+      min: 0,
+      max: 1,
+      majorStep: 1,
+      minorStep: 0.1,
+    },
   },
   practiceProblems: [
     {
@@ -62,8 +69,16 @@ export const g3Fractions: Chapter = {
     {
       id: "g3-fraction-normal-2",
       difficulty: "normal",
-      question: "数直線を10等分して、0から1目もり分すすんだ位置にあてはまる分数を答えましょう。",
+      question: "数直線を10等分して、0から1目もり分すすんだ位置（ア）にあてはまる分数を答えましょう。",
       answer: "1/10",
+      figure: {
+        kind: "number-line",
+        min: 0,
+        max: 1,
+        majorStep: 1,
+        minorStep: 0.1,
+        markers: [{ value: 0.1, label: "ア" }],
+      },
       steps: ["0から1までを10等分しているので、1目もりは 1/10", "1目もり分すすんだ位置は 1/10"],
       tags: ["分数と数直線"],
     },
@@ -122,8 +137,16 @@ export const g3Fractions: Chapter = {
     {
       id: "g3-fraction-normal-6",
       difficulty: "normal",
-      question: "数直線を10等分して、0から7目もり分すすんだ位置にあてはまる分数を答えましょう。",
+      question: "数直線を10等分して、0から7目もり分すすんだ位置（ア）にあてはまる分数を答えましょう。",
       answer: "7/10",
+      figure: {
+        kind: "number-line",
+        min: 0,
+        max: 1,
+        majorStep: 1,
+        minorStep: 0.1,
+        markers: [{ value: 0.7, label: "ア" }],
+      },
       steps: ["1目もりは 1/10", "7目もり分すすんだ位置は 7/10"],
       tags: ["分数と数直線"],
     },

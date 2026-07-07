@@ -14,6 +14,29 @@ export type ProblemFigure =
       kind: "table";
       columns: string[];
       rows: { label: string; cells: (string | number)[] }[];
+    }
+  | {
+      kind: "triangle";
+      sideLabels: [string, string, string];
+      // 同じ数字が入っている辺どうしが等しい長さであることを示すチックマークの数（0はマークなし）
+      equalMarks: [0 | 1 | 2, 0 | 1 | 2, 0 | 1 | 2];
+      vertexLabels?: [string, string, string];
+    }
+  | {
+      kind: "circle";
+      centerLabel?: string;
+      radiusLabel?: string;
+      showDiameter?: boolean;
+      diameterLabel?: string;
+    }
+  | {
+      kind: "number-line";
+      min: number;
+      max: number;
+      majorStep: number;
+      minorStep?: number;
+      // valueで正しい位置に矢印を描画するが、表示するのはlabelのみ（答えの数値は見せない）
+      markers?: { value: number; label: string }[];
     };
 
 export interface Problem {
@@ -29,7 +52,28 @@ export interface Problem {
 // 単元解説に添える図。単元ごとに必要な種類を増やしていく
 // （例: わり算=grouping、円と球=circle、三角形=triangle など）。
 export type ExplanationDiagram =
-  | { kind: "grouping"; total: number; groups: number; label?: string };
+  | { kind: "grouping"; total: number; groups: number; label?: string }
+  | {
+      kind: "triangle";
+      sideLabels: [string, string, string];
+      equalMarks: [0 | 1 | 2, 0 | 1 | 2, 0 | 1 | 2];
+      vertexLabels?: [string, string, string];
+    }
+  | {
+      kind: "circle";
+      centerLabel?: string;
+      radiusLabel?: string;
+      showDiameter?: boolean;
+      diameterLabel?: string;
+    }
+  | {
+      kind: "number-line";
+      min: number;
+      max: number;
+      majorStep: number;
+      minorStep?: number;
+      markers?: { value: number; label: string }[];
+    };
 
 export interface NotebookExample {
   question: string;

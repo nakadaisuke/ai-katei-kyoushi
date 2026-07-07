@@ -35,6 +35,11 @@ export const g3Triangles: Chapter = {
         "辺の長さは7cm・7cm・5cmで、7cmの辺が2つ→二等辺三角形",
       ],
     },
+    diagram: {
+      kind: "triangle",
+      sideLabels: ["7", "5", "7"],
+      equalMarks: [1, 0, 1],
+    },
   },
   practiceProblems: [
     {
@@ -68,6 +73,7 @@ export const g3Triangles: Chapter = {
       answer: "正三角形",
       steps: ["3つの辺の長さがすべて等しいので、正三角形"],
       tags: ["三角形の分類"],
+      figure: { kind: "triangle", sideLabels: ["7", "7", "7"], equalMarks: [1, 1, 1] },
     },
   ],
   assessmentProblems: [
@@ -78,6 +84,7 @@ export const g3Triangles: Chapter = {
       answer: "二等辺三角形",
       steps: ["8cmの辺が2つあり、長さが等しいので、二等辺三角形"],
       tags: ["三角形の分類"],
+      figure: { kind: "triangle", sideLabels: ["8", "5", "8"], equalMarks: [1, 0, 1] },
     },
     {
       id: "g3-triangle-easy-4",
@@ -94,6 +101,7 @@ export const g3Triangles: Chapter = {
       answer: "正三角形",
       steps: ["3つの辺の長さがすべて等しいので、正三角形"],
       tags: ["三角形の分類"],
+      figure: { kind: "triangle", sideLabels: ["6", "6", "6"], equalMarks: [1, 1, 1] },
     },
     {
       id: "g3-triangle-normal-3",
@@ -245,6 +253,7 @@ export const g3Triangles: Chapter = {
       answer: "二等辺三角形",
       steps: ["7cmの辺が2つあり、長さが等しいので、二等辺三角形"],
       tags: ["三角形の分類"],
+      figure: { kind: "triangle", sideLabels: ["7", "5", "7"], equalMarks: [1, 0, 1] },
     },
     {
       id: "g3-triangle-normal-13",

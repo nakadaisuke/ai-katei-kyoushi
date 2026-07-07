@@ -35,6 +35,13 @@ export const g3CircleSphere: Chapter = {
         "半径 ＝ 直径 ÷ 2 → 10 ÷ 2 = 5cm",
       ],
     },
+    diagram: {
+      kind: "circle",
+      centerLabel: "中心",
+      radiusLabel: "半径",
+      showDiameter: true,
+      diameterLabel: "直径",
+    },
   },
   practiceProblems: [
     {
@@ -44,6 +51,7 @@ export const g3CircleSphere: Chapter = {
       answer: "中心",
       steps: ["円のまん中の点は「中心」とよぶ"],
       tags: ["円の用語"],
+      figure: { kind: "circle", centerLabel: "ア" },
     },
     {
       id: "g3-circle-easy-2",
@@ -78,6 +86,7 @@ export const g3CircleSphere: Chapter = {
       answer: "中心",
       steps: ["直径は必ず円の中心を通る"],
       tags: ["円の用語"],
+      figure: { kind: "circle", centerLabel: "中心", showDiameter: true, diameterLabel: "直径" },
     },
     {
       id: "g3-circle-easy-4",
@@ -94,6 +103,7 @@ export const g3CircleSphere: Chapter = {
       answer: "半径",
       steps: ["中心からまわりまでの直線は「半径」とよぶ"],
       tags: ["円の用語"],
+      figure: { kind: "circle", centerLabel: "ア", radiusLabel: "アウ" },
     },
     {
       id: "g3-circle-normal-4",
@@ -102,6 +112,13 @@ export const g3CircleSphere: Chapter = {
       answer: "2",
       steps: ["直径は半径の2倍の長さになる"],
       tags: ["半径と直径"],
+      figure: {
+        kind: "circle",
+        centerLabel: "中心",
+        radiusLabel: "アイ",
+        showDiameter: true,
+        diameterLabel: "ウエ",
+      },
     },
     {
       id: "g3-circle-normal-5",

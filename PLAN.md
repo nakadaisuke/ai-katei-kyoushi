@@ -199,6 +199,8 @@ interface Chapter {
 各問題画面（練習・簡単/普通/チャレンジ）には常時「ヒント」ボタンを表示。押すたびに段階的にヒントが強くなる：
 1回目＝着眼点、2回目＝使う公式、3回目＝最初の1ステップ。ヒントもClaude APIで生成するが、公式解答は絶対に含めないようプロンプトで制約する。章末小テストのみ、テスト形式を保つためヒント・AI再解説は提供しない。
 
+2問目以降には「← 前の問題に戻る」リンクも表示する（`ProblemView`/`QuizProblemView`の`onBack`props）。練習・簡単/普通/チャレンジの画面では、答え合わせ後（結果表示中）は非表示にし、「わかった・次へ」の流れを優先させる。章末小テスト・マイルストーンテスト・卒業テストでも同様に戻れるが、戻った問題を解き直すと、結果一覧（`quizResults`）ではその位置の結果を最新の回答で置き換える（重複エントリを防ぐため、戻った時点で該当位置以降の結果を切り詰めてから再提出を待つ）。
+
 ## 5. AI呼び出し設計
 
 AI呼び出しは [Vercel AI SDK](https://sdk.vercel.ai/)（`ai` + `@ai-sdk/anthropic`）経由で行い、`@anthropic-ai/sdk`を直接は呼ばない。理由：将来別プロバイダー（OpenAI等）に乗り換える際、`generateText({model, system, prompt})`という呼び出し形はそのままに、`src/lib/ai/model.ts`の`getModel()`内のswitch文にケースを1つ足し、`AI_PROVIDER`/`AI_MODEL`環境変数を変えるだけで切り替えられるようにするため。
@@ -283,13 +285,18 @@ Response: { explanation: string }
 - 小テストの回答は`attempts`テーブルに`is_quiz = true`で記録し（`0002_add_is_quiz.sql`）、ダッシュボード・保護者ページの進捗集計（`fetchAttempts`結果を`!a.is_quiz`でフィルタ）からは除外している。小テストの成績を通常演習の進捗率に混ぜないため。
 - 合格ラインは正答率80%（`QuizReview`コンポーネントの`PASS_RATIO`）。将来、複数章をまたぐ「小テストで理解が浅い章へ自動的に戻す」機能を作る際の土台になる。
 
-## 5.8 表・棒グラフを使う問題（`ProblemFigure`）
+## 5.8 図を使う問題（`ProblemFigure` / `ExplanationDiagram`）
 
-「棒グラフと表」単元は内容そのものが図の読み取りが本質のため、`Problem.figure`に`table`または`bar-chart`を持たせ、`ProblemView`・`QuizProblemView`・`QuizReview`のどれでも問題文の下に図を描画する（`components/diagrams/TableDiagram.tsx` / `BarChartDiagram.tsx`）。
+`Problem.figure`（問題ごとの図）と`Chapter.explanation.diagram`（単元解説の図）は同じ形の判別共用体で、`kind`ごとにディスパッチする2つのコンポーネント（`components/ProblemFigureView.tsx` / `components/ExplanationDiagram.tsx`）が、`components/diagrams/`配下の個別コンポーネントへ振り分ける。`ProblemView`・`QuizProblemView`・`QuizReview`のどれでも問題文の下に図を描画する。
 
-- 棒グラフはあえて棒の上に数値ラベルを付けない（目盛りを読んで数量を答えさせるのがこの単元の目的のため。通常のダッシュボード可視化とは異なる意図的な例外）。
-- 表は空らんのセルに「ア」「？」などの文字をそのまま入れて、実データの表を忠実に再現する。
-- 単元解説に添える図（`ExplanationDiagram`、わり算の`grouping`図など）とは別の仕組みで、問題ごとに個別の図が必要な場合に使う。今後、円と球や三角形など図形単元でも同様の仕組みで図を追加できる。
+現在サポートしている`kind`：
+- `table` / `bar-chart`（`TableDiagram.tsx` / `BarChartDiagram.tsx`）：「棒グラフと表」単元用。棒グラフはあえて棒の上に数値ラベルを付けない（目盛りを読んで数量を答えさせるのがこの単元の目的のため）。表は空らんのセルに「ア」「？」などの文字をそのまま入れて、実データの表を忠実に再現する。
+- `grouping`（`GroupingDiagram.tsx`）：わり算の等分のようすを示す図。
+- `triangle`（`TriangleDiagram.tsx`）：二等辺三角形・正三角形単元用。実際の長さの比率には忠実でない模式図（頂点A=上・B=左下・C=右下で固定）。`sideLabels`で辺の長さ、`equalMarks`（0〜2）で等しい辺に付けるチックマークの数を指定する。
+- `circle`（`CircleDiagram.tsx`）：円と球単元用。中心・半径・（`showDiameter`が真なら）直径を描く。`radiusLabel`／`diameterLabel`が無い場合はその線自体を描画しない（問題に無関係な線で図を煩雑にしないため）。
+- `number-line`（`NumberLineDiagram.tsx`）：時こく・大きい数・分数単元用。`majorStep`／`minorStep`で目盛りを、`markers`で位置を示す矢印を描く。`markers`は`value`で実際の位置に矢印を配置しつつ、表示するのは`label`（"ア"など）のみにして答えの数値を見せない（棒グラフが棒に数値ラベルを付けない設計と同じ考え方）。
+
+いずれも共通のカラーパレット（`#2a78d6`/`#3987e5`塗り、`#c3c2b7`/`#383835`線、`#eda100`/`#c98500`の強調色など、ライト/ダーク両対応）に揃えている。単元解説の図と問題の図は別々のデータ（`explanation.diagram`と`problem.figure`）なので、同じ単元でも解説用と個々の問題用で異なる具体的な数値を持たせられる。
 
 ## 5.9 マイルストーンテスト・卒業テスト・合格お祝い演出（`lib/milestones.ts`）
 
