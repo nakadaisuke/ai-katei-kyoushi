@@ -31,6 +31,7 @@ export const g3MultiplicationWritten: Chapter = {
       "2桁×2桁は「かける数を分けて、2つのかけ算の答えを足す」と計算できる（例：46×18 = 46×8 + 46×10）",
       "文章題は「1つ分の数 × いくつ分」の形を見つける",
     ],
+    diagram: { kind: "column-calculation", operator: "×", a: 46, b: 18 },
     notebookExample: {
       question: "例：46 × 18 = ？（2桁×2桁の筆算）",
       lines: [
@@ -211,7 +212,7 @@ export const g3MultiplicationWritten: Chapter = {
       difficulty: "hard",
       question:
         "1こ85円のボールを21こ買うのと、1こ45円のボールを40こ買うのとでは、どちらがどれだけ安いでしょうか。",
-      answer: "1こ85円のボールを21こ買うほうが15円安い",
+      answer: "85円のボール、15円",
       steps: [
         "それぞれの代金を計算する：85 × 21 と 45 × 40",
         "85 × 21 = 85×1 + 85×20 = 85 + 1700 = 1785",

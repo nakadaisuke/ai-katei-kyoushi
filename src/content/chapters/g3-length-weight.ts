@@ -191,7 +191,7 @@ export const g3LengthWeight: Chapter = {
       difficulty: "hard",
       question:
         "はな子さんの家から学校までの道のりは2km700m、じろうさんの家から学校までの道のりは1km900mあります。どちらがどれだけ長いですか。",
-      answer: "はな子さんが800m長い",
+      answer: "はな子さん、800m",
       steps: [
         "kmをmに直して考える：2km700m = 2700m、1km900m = 1900m",
         "2700 - 1900 = 800",

@@ -27,6 +27,10 @@ export const g3AdditionSubtractionWritten: Chapter = {
       "たし算は順番を変えても答えは同じ→10や100のまとまりを作るとくふうできる",
       "文章題は「合わせる」か「差・のこりを求める」かを読み取る",
     ],
+    diagrams: [
+      { kind: "column-calculation", operator: "+", a: 587, b: 328 },
+      { kind: "column-calculation", operator: "-", a: 136, b: 29 },
+    ],
     notebookExample: {
       question: "例：587 + 328 = ？（くり上がりに注意）",
       lines: [
@@ -139,7 +143,7 @@ export const g3AdditionSubtractionWritten: Chapter = {
       id: "g3-addsub-normal-5",
       difficulty: "normal",
       question: "よし子さんの学校の児童数は、男子246人、女子285人です。男子と女子では、どちらが何人多いですか。",
-      answer: "女子が39人多い",
+      answer: "女子、39人",
       steps: ["「差を求める」のでひき算 285 - 246 を考える", "285 - 246 = 39", "女子が39人多い"],
       tags: ["ひき算の筆算", "文章題"],
     },
@@ -204,7 +208,7 @@ export const g3AdditionSubtractionWritten: Chapter = {
       id: "g3-addsub-hard-4",
       difficulty: "hard",
       question: "海にあさりの貝をとりに行きました。はなこさんの家族は364こ、たろうさんの家族は299ことりました。どちらがいくつ多いでしょうか。",
-      answer: "はなこさんの家族が65こ多い",
+      answer: "はなこさんの家族、65こ",
       steps: ["「差を求める」のでひき算 364 - 299 を考える", "364 - 299 = 65", "はなこさんの家族が65こ多い"],
       tags: ["ひき算の筆算", "文章題"],
     },
@@ -212,7 +216,7 @@ export const g3AdditionSubtractionWritten: Chapter = {
       id: "g3-addsub-hard-5",
       difficulty: "hard",
       question: "ちひろさんの学校の児童数は、778人です。このうち、男子は357人です。男子と女子では、どちらが何人多いですか。",
-      answer: "女子が64人多い",
+      answer: "女子、64人",
       steps: [
         "まず女子の人数を求める：778 - 357 = 421",
         "男子と女子の差を求める：421 - 357 = 64",
