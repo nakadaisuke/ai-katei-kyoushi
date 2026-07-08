@@ -25,6 +25,7 @@ export function ProblemView({
   onRequestReexplain,
   onNext,
   onBack,
+  backLabel = "← 前の問題に戻る",
 }: {
   problem: Problem;
   headerLabel: string;
@@ -38,6 +39,7 @@ export function ProblemView({
   onRequestReexplain: () => void;
   onNext: () => void;
   onBack?: () => void;
+  backLabel?: string;
 }) {
   const [draft, setDraft] = useState("");
 
@@ -55,7 +57,7 @@ export function ProblemView({
           onClick={onBack}
           className="self-start text-sm text-blue-600 underline"
         >
-          ← 前の問題に戻る
+          {backLabel}
         </button>
       )}
 

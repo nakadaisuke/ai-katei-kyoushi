@@ -24,6 +24,14 @@ export function ExplanationPanel({
         </div>
       )}
 
+      {chapter.explanation.diagrams && chapter.explanation.diagrams.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-4 rounded bg-[#f9f9f7] p-4 dark:bg-[#0d0d0d]">
+          {chapter.explanation.diagrams.map((d, i) => (
+            <ExplanationDiagram key={i} diagram={d} />
+          ))}
+        </div>
+      )}
+
       {chapter.explanation.notebookExample && (
         <div className="flex flex-col gap-2">
           <h3 className="text-sm font-semibold">ノートの書き方の例</h3>

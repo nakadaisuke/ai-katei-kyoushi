@@ -8,12 +8,13 @@ import { pickReviewProblem } from "@/lib/review";
 import { pickQuizProblems } from "@/lib/quiz";
 import type { Chapter, Problem } from "@/lib/types";
 import { ExplanationPanel } from "@/components/ExplanationPanel";
+import { CheckpointPanel } from "@/components/CheckpointPanel";
 import { ProblemView } from "@/components/ProblemView";
 import { QuizProblemView } from "@/components/QuizProblemView";
 import { QuizReview, type QuizResultEntry } from "@/components/QuizReview";
 
 type Section = "practice" | "assessment";
-type Phase = "explanation" | number | "quiz" | "quiz-review";
+type Phase = "explanation" | number | "checkpoint" | "quiz" | "quiz-review";
 
 const QUIZ_LENGTH = 5;
 
@@ -34,6 +35,7 @@ export function ChapterView({
     [chapter],
   );
   const quizProblems = useMemo(() => pickQuizProblems(chapter, QUIZ_LENGTH), [chapter]);
+  const practiceCount = chapter.practiceProblems.length;
 
   const initialPhase: Phase =
     initialIndex == null ? "explanation" : initialIndex >= queue.length ? "quiz" : initialIndex;
@@ -85,7 +87,12 @@ export function ChapterView({
   }
 
   function handleBack() {
-    if (reviewProblem || typeof phase !== "number" || phase <= 0) return;
+    if (reviewProblem || typeof phase !== "number") return;
+    if (phase <= 0) {
+      setPhase("explanation");
+      resetTransientState();
+      return;
+    }
     startProblem(phase - 1);
   }
 
@@ -101,6 +108,27 @@ export function ChapterView({
     setQuizResults([]);
     setPhase("quiz");
     saveResumeIndex(supabaseRef.current, studentId, chapter.id, queue.length).catch(() => {});
+  }
+
+  // 練習問題の最後から評価問題の1問目に進むタイミングで、その単元に
+  // midCheckpoint（追加解説）が設定されていれば、間にチェックポイント画面を挟む。
+  function goToNextAfterProblem(nextPhase: number | "quiz") {
+    if (
+      typeof nextPhase === "number" &&
+      nextPhase === practiceCount &&
+      chapter.explanation.midCheckpoint &&
+      chapter.assessmentProblems.length > 0
+    ) {
+      setReviewProblem(null);
+      setPhase("checkpoint");
+      resetTransientState();
+      return;
+    }
+    if (nextPhase === "quiz") {
+      startQuiz();
+    } else {
+      startProblem(nextPhase);
+    }
   }
 
   function handleSubmit(raw: string) {
@@ -177,10 +205,8 @@ export function ChapterView({
     if (reviewProblem) {
       const next = pendingNextPhaseRef.current;
       pendingNextPhaseRef.current = null;
-      if (next === "quiz") {
-        startQuiz();
-      } else if (typeof next === "number") {
-        startProblem(next);
+      if (next !== null) {
+        goToNextAfterProblem(next);
       }
       return;
     }
@@ -199,11 +225,7 @@ export function ChapterView({
       }
     }
 
-    if (nextPhase === "quiz") {
-      startQuiz();
-    } else {
-      startProblem(nextPhase);
-    }
+    goToNextAfterProblem(nextPhase);
   }
 
   async function handleQuizSubmit(raw: string) {
@@ -247,6 +269,15 @@ export function ChapterView({
     return <ExplanationPanel chapter={chapter} onNext={() => startProblem(0)} />;
   }
 
+  if (phase === "checkpoint" && chapter.explanation.midCheckpoint) {
+    return (
+      <CheckpointPanel
+        checkpoint={chapter.explanation.midCheckpoint}
+        onNext={() => startProblem(practiceCount)}
+      />
+    );
+  }
+
   if (phase === "quiz") {
     return (
       <QuizProblemView
@@ -265,7 +296,6 @@ export function ChapterView({
 
   if (!activeProblem) return null;
 
-  const practiceCount = chapter.practiceProblems.length;
   const currentSection = reviewProblem
     ? null
     : queue[phase as number].section;
@@ -275,7 +305,8 @@ export function ChapterView({
       ? `練習問題 ${(phase as number) + 1} / ${practiceCount}`
       : `問題 ${(phase as number) - practiceCount + 1} / ${chapter.assessmentProblems.length}`;
 
-  const canGoBack = !reviewProblem && !result && typeof phase === "number" && phase > 0;
+  const canGoBack = !reviewProblem && !result && typeof phase === "number";
+  const backLabel = phase === 0 ? "← 解説にもどる" : "← 前の問題に戻る";
 
   return (
     <ProblemView
@@ -286,6 +317,7 @@ export function ChapterView({
       result={result}
       reexplanation={reexplanation}
       reexplainLoading={reexplainLoading}
+      backLabel={backLabel}
       onSubmit={handleSubmit}
       onRequestHint={handleRequestHint}
       onRequestReexplain={handleRequestReexplain}
