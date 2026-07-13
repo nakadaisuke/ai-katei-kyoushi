@@ -14,10 +14,12 @@ function toHalfWidthDigits(input: string): string {
 // 面積の単位：㎡系の合字はIME入力が難しいため、ASCII表記（cm2, cm^2 等）や
 // 「平方センチメートル」のような読み下し表記からも同じカノニカル表記に畳み込む。
 // km2/cm2をm2より先に処理しないと、m2側のパターンに巻き込まれてしまう。
+// "2"の直後に別の数字が続く場合（例："1km250m"の"km2"）は単位表記の"2乗"
+// ではなく別の数の一部なので、否定先読みで除外する。
 const UNIT_REPLACEMENTS: [RegExp, string][] = [
-  [/km\^?2|km²|㎢|平方キロメートル/gi, "k㎡"],
-  [/cm\^?2|cm²|㎠|平方センチメートル/gi, "c㎡"],
-  [/m\^?2|m²|平方メートル/gi, "㎡"],
+  [/km\^?2(?!\d)|km²|㎢|平方キロメートル/gi, "k㎡"],
+  [/cm\^?2(?!\d)|cm²|㎠|平方センチメートル/gi, "c㎡"],
+  [/m\^?2(?!\d)|m²|平方メートル/gi, "㎡"],
 ];
 
 // 図形・分数などの用語は、漢字を習っていない生徒がひらがなで書いても
@@ -48,7 +50,10 @@ export function normalizeAnswer(raw: string): string {
     .replace(/\s+/g, "")
     .replace(/余り|のこり|残り/g, "あまり")
     .replace(/度/g, "°")
-    .replace(/,/g, "");
+    // 数字に挟まれた半角カンマ（"13,000"の桁区切り）だけを除去する。
+    // 数字に挟まれていないカンマ（"女子,39人"）はパーツ区切りとして
+    // splitParts に残す必要があるため、ここでは消さない。
+    .replace(/(?<=\d),(?=\d)/g, "");
 
   for (const [pattern, replacement] of VOCAB_REPLACEMENTS) {
     text = text.replace(pattern, replacement);
@@ -102,6 +107,7 @@ function parseKanjiSmallGroup(text: string): number | null {
   let hasCurrent = false;
   for (const ch of text) {
     if (ch in KANJI_DIGITS) {
+      if (hasCurrent) return null; // 位取りマーカーを挟まない連続数字は不正な並び
       current = KANJI_DIGITS[ch];
       hasCurrent = true;
       continue;
@@ -157,7 +163,7 @@ export function parseJapaneseNumber(text: string): number | null {
 }
 
 function splitParts(text: string): string[] {
-  return text.split(/[、，]/).filter((part) => part.length > 0);
+  return text.split(/[、，,]/).filter((part) => part.length > 0);
 }
 
 // 「、」区切りの複合的な答え（例："8月、25℃"）は、質問が2つ以上のことを
